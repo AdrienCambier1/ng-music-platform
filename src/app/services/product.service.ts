@@ -29,18 +29,17 @@ export class ProductService {
   private loadInitialData(): void {
     const storedProducts = localStorage.getItem('products');
     if (storedProducts) {
-      this.products = JSON.parse(storedProducts);  // Chargement des produits stockés dans localStorage
+      this.products = JSON.parse(storedProducts);
     }
-    this.cartSubject.next(this.loadCartFromLocalStorage());  // Chargement du panier
-    this.favoritesSubject.next(this.loadFavoritesFromLocalStorage());  // Chargement des favoris
+    this.cartSubject.next(this.loadCartFromLocalStorage());
+    this.favoritesSubject.next(this.loadFavoritesFromLocalStorage());
   }
 
   // Récupérer les produits depuis l'API
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.url).pipe(
       tap((products) => {
-        this.products = products;
-        localStorage.setItem('products', JSON.stringify(products)); // Sauvegarde des produits dans localStorage
+        localStorage.setItem('products', JSON.stringify(products));
       })
     );
   }
@@ -60,13 +59,10 @@ export class ProductService {
     }
   }
 
-  // Nombre d'articles uniques dans le panier
   getCartItemCount(): number {
     const uniqueItems = new Set(this.cartSubject.value.map((item) => item.id));
     return uniqueItems.size;
   }
-
-  // Supprimer un produit du panier
   removeFromCart(productId: number): void {
     const product = this.getProduct(productId);
     if (product) {
@@ -76,39 +72,30 @@ export class ProductService {
     }
   }
 
-  // Récupérer les styles uniques
-  getUniqueStyles(): string[] {
-    const uniqueStyles = new Set(this.products.map((product) => product.style));
-    return Array.from(uniqueStyles);
-  }
-
-  // Vider le panier
   clearCart(): void {
     this.products.forEach((product) => (product.quantity = 0));
     this.updateCart();
     this.saveProductsToLocalStorage();
   }
 
-  // Vider les favoris
   clearFavorites(): void {
     this.products.forEach((product) => (product.isFavorite = false));
     this.updateFavorites();
     this.saveProductsToLocalStorage();
   }
 
-  // Mise à jour du panier
   private updateCart(): void {
     const cartItems = this.getCart();
     this.cartSubject.next(cartItems);
     this.saveCartToLocalStorage(cartItems);
   }
 
-  // Mise à jour des favoris
   private updateFavorites(): void {
     const favoriteItems = this.getFavorites();
     this.favoritesSubject.next(favoriteItems);
     this.saveFavoritesToLocalStorage(favoriteItems);
   }
+
 
   // Incrémenter la quantité d'un produit
   incrementQuantity(productId: number): void {
@@ -143,35 +130,38 @@ export class ProductService {
     return this.products.filter((product) => product.quantity > 0);
   }
 
-  // Récupérer les produits favoris
   getFavorites(): Product[] {
     return this.products.filter((product) => product.isFavorite);
   }
 
-  // Ajouter/retirer un produit des favoris
   switchFavorite(product: Product): void {
-    product.isFavorite = !product.isFavorite;
-    this.updateFavorites();
-    this.saveProductsToLocalStorage();
+    this.favorites$.subscribe((favorites) => {
+      if (favorites.includes(product)) {
+        favorites = favorites.filter((fav) => fav.id !== product.id);
+      } else {
+        favorites.push(product);
+      }
+      this.favoritesSubject.next(favorites);
+    }
+    );
   }
 
-  // Sauvegarder le panier dans localStorage
   private saveCartToLocalStorage(cartItems: Product[]): void {
     const cartIds = cartItems.map((item) => item.id);
     localStorage.setItem(this.storageCartKey, JSON.stringify(cartIds));
   }
 
-  // Sauvegarder les favoris dans localStorage
   private saveFavoritesToLocalStorage(favoriteItems: Product[]): void {
-    localStorage.setItem(this.storageFavoritesKey, JSON.stringify(favoriteItems));
+    localStorage.setItem(
+      this.storageFavoritesKey,
+      JSON.stringify(favoriteItems)
+    );
   }
 
-  // Sauvegarder tous les produits dans localStorage
   private saveProductsToLocalStorage(): void {
     localStorage.setItem('products', JSON.stringify(this.products));
   }
 
-  // Charger les produits du panier depuis localStorage
   private loadCartFromLocalStorage(): Product[] {
     const storedCart = localStorage.getItem(this.storageCartKey);
     if (storedCart) {
@@ -183,7 +173,6 @@ export class ProductService {
     return [];
   }
 
-  // Charger les produits favoris depuis localStorage
   private loadFavoritesFromLocalStorage(): Product[] {
     const storedFavorites = localStorage.getItem(this.storageFavoritesKey);
     if (storedFavorites) {

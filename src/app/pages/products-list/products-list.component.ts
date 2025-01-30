@@ -6,8 +6,7 @@ import { ProductFilterPipe } from '../../pipes/product-filter.pipe';
 import { SearchFilterPipe } from '../../pipes/search-filter.pipe';
 import { FormsModule } from '@angular/forms';
 import { DropDownButtonComponent } from '../../components/drop-down-button/drop-down-button.component';
-import { Product } from '../../interfaces/product'; 
-import { Subscription } from 'rxjs';
+import { Product } from '../../interfaces/product';
 
 @Component({
   selector: 'app-products-list',
@@ -26,9 +25,7 @@ export class ProductsListComponent implements OnInit {
   productService = inject(ProductService);
   products: Product[] = [];
   searchValue: string = '';
-  sortOrder: 'asc' | 'desc' | undefined = 'asc'; // Valeur par défaut
-
-  private productsSubscription: Subscription | undefined; // Souscription à l'Observable
+  sortOrder: any = 'asc';
 
   sortOptions = [
     { label: 'Croissant', action: () => this.changeSortOrder('asc') },
@@ -36,26 +33,19 @@ export class ProductsListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // On souscrit à l'Observable retourné par le service
-    this.productsSubscription = this.productService.getProducts().subscribe({
+    // On s'abonne à l'Observable retourné par le service pour récupérer les produits
+    this.productService.getProducts().subscribe({
       next: (products: Product[]) => {
-        this.products = products; // On affecte les produits reçus
+        this.products = products;
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des produits:', error);
+        console.error('Erreur lors du chargement des produits :', error);
       }
     });
   }
-  ngOnDestroy(): void {
-    // Si le composant est détruit, on se désabonne de l'Observable pour éviter les fuites de mémoire
-    if (this.productsSubscription) {
-      this.productsSubscription.unsubscribe();
-    }
-  }
 
-  changeSortOrder(order: 'asc' | 'desc'): void {
+  changeSortOrder(order: string) {
     console.log('Tri changé en :', order);
     this.sortOrder = order;
   }
-  
 }
