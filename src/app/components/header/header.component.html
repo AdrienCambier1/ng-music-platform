@@ -1,0 +1,30 @@
+<header
+  class="fixed bg-black h-16 w-full flex items-center justify-between px-8 z-50"
+>
+  <p
+    class="text-xl font-semibold text-white uppercase cursor-pointer"
+    (click)="scrollToTop()"
+    routerLink="/"
+  >
+    Stray Guys
+  </p>
+  <div class="flex gap-4 items-center">
+    <app-dark-button
+      [value]="'Mes favoris'"
+      [link]="'/favorites'"
+      (click)="scrollToTop()"
+    />
+    <div class="relative flex items-center justify-center">
+      <i
+        routerLink="/cart"
+        class="fa-solid fa-cart-shopping text-white cursor-pointer"
+        (click)="scrollToTop()"
+      ></i>
+      @if (cartItemCount > 0) {
+      <span class="button-count">
+        {{ cartItemCount }}
+      </span>
+      }
+    </div>
+  </div>
+</header>

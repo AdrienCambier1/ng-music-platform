@@ -1,0 +1,19 @@
+<div class="mt-8 flex flex-col items-center">
+  <h1 class="main-title">Mes favoris</h1>
+
+  @if(favorites.length === 0) {
+  <div class="mt-8 gap-4 w-full flex flex-col items-center">
+    <p class="text-neutral-600 text-sm">Aucun favoris</p>
+    <app-dark-button [value]="'Retour à la boutique'" link="/"
+      ><i class="fa-solid fa-arrow-left"></i
+    ></app-dark-button>
+  </div>
+  } @else {
+  <div class="mt-8 gap-4 grid grid-cols-1 lg:grid-cols-2 w-full">
+    @for(p of favorites; track p.id) {
+    <app-product-card [product]="p" />
+    }
+  </div>
+  <a class="mt-8 text-button" (click)="clearFavorites()">Vider mes favoris</a>
+  }
+</div>

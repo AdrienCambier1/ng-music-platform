@@ -1,0 +1,26 @@
+<div class="relative z-20">
+  <button
+    class="w-44 flex items-center justify-between cursor-pointer light-text p-2 bg-white border border-neutral-800"
+    (click)="toggleDropdown()"
+  >
+    {{ buttonLabel }}
+    <i class="fa-solid fa-angle-down icon-button"></i>
+  </button>
+
+  <ul
+    class="w-full transform origin-top transition-all ease-in-out border border-t-0 border-neutral-800 absolute top-full bg-white"
+    [ngClass]="{
+      'scale-y-100 opacity-100': isOpen,
+      'scale-y-0 opacity-0': !isOpen
+    }"
+  >
+    @for(option of options; track option.label){
+    <li
+      class="light-text p-2 cursor-pointer hover:bg-neutral-100"
+      (click)="selectOption(option)"
+    >
+      {{ option.label }}
+    </li>
+    }
+  </ul>
+</div>

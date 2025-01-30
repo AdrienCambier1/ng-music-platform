@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Silka";
+  src: url("app/assets/font/Silka-Regular.otf");
+}
+
+* {
+  font-family: "Silka";
+}
+
+body {
+  @apply bg-neutral-100;
+}
+
+.main-title {
+  @apply text-2xl font-semibold text-neutral-800 relative w-fit;
+}
+
+.main-title::before {
+  background-color: #e5b2a0;
+  content: "";
+  width: 100%;
+  height: 8px;
+  bottom: 4px;
+  left: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+.text-button {
+  @apply text-neutral-800 text-sm flex gap-2 items-center relative cursor-pointer;
+}
+
+.text-button::before {
+  background-color: #e5b2a0;
+  content: "";
+  width: 100%;
+  height: 2px;
+  top: 100%;
+  left: 0;
+  position: absolute;
+  transform: scaleX(10%);
+  transform-origin: left;
+  @apply transition-transform ease-in-out;
+}
+
+.text-button:hover::before {
+  transform: scaleX(100%);
+}
+
+.card-title {
+  @apply text-xl font-semibold text-neutral-800;
+}
+
+.bold-text {
+  @apply text-neutral-800 text-xl font-bold;
+}
+
+.light-text {
+  @apply text-neutral-600 text-sm;
+}
+
+.card {
+  @apply flex bg-white shadow-md shadow-neutral-300/50 flex-col sm:flex-row;
+}
+
+.alt-card {
+  @apply bg-neutral-200 w-full p-4 flex flex-col gap-4;
+}
+
+.icon-button {
+  @apply cursor-pointer text-neutral-800;
+}
+
+.dark-button {
+  @apply cursor-pointer px-5 py-1 bg-neutral-800 rounded-full flex items-center gap-2 text-white text-sm font-semibold w-fit;
+}
+
+.light-button {
+  @apply cursor-pointer px-5 py-1 bg-black/10 rounded-full flex items-center gap-2 text-neutral-800 text-sm font-semibold w-fit;
+}
+
+.form-input {
+  @apply flex flex-col gap-2 flex-1;
+}
+
+.form-input input {
+  @apply p-2 border-b border-neutral-800 bg-white text-neutral-800 placeholder:text-neutral-500 text-sm outline-none;
+}
+
+.button-count {
+  @apply absolute -top-2 -right-2 bg-red-400 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center pointer-events-none;
+}
+
+.tag {
+  @apply text-yellow-500 bg-yellow-50 w-fit px-2 py-1 text-sm;
+}
+
+.img-card {
+  @apply object-cover w-full sm:w-60 sm:h-60;
+}

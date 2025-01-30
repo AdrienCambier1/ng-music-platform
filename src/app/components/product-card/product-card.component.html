@@ -1,0 +1,39 @@
+<div class="card">
+  <img [src]="product.imageUrl" class="img-card" />
+  <div class="flex flex-col justify-between p-4 w-full gap-8">
+    <div class="flex flex-col gap-4">
+      <div class="flex justify-between items-center">
+        <h3 class="card-title">{{ product.title }}</h3>
+        <app-text-button
+          [value]="'En savoir plus'"
+          link="/products/{{ product.id }}"
+          ><i class="fa-solid fa-arrow-right text-neutral-800"></i
+        ></app-text-button>
+      </div>
+      <p class="light-text">{{ product.author }}</p>
+      <p class="tag">
+        {{ product.style }}
+      </p>
+    </div>
+    <div class="flex justify-between items-center">
+      <div class="flex gap-4 items-center">
+        <app-dark-button
+          [value]="'Ajouter au panier'"
+          (click)="addTocart(product.id)"
+        ></app-dark-button>
+        @if(product.isFavorite) {
+        <i
+          class="fa-solid fa-heart icon-button"
+          (click)="switchFavorite(product)"
+        ></i>
+        } @else {
+        <i
+          class="fa-regular fa-heart icon-button"
+          (click)="switchFavorite(product)"
+        ></i>
+        }
+      </div>
+      <p class="bold-text">{{ product.price }} €</p>
+    </div>
+  </div>
+</div>

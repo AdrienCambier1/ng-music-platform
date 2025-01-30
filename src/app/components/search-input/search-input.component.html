@@ -1,0 +1,11 @@
+<div class="h-10 w-full border-b border-neutral-800">
+  <div class="absolute flex items-center justify-center h-10">
+    <i class="fa-solid fa-magnifying-glass text-neutral-800"></i>
+  </div>
+  <input
+    class="focus:outline-none h-full w-full pl-8 text-ellipsis text-neutral-800 placeholder:text-neutral-500 bg-transparent"
+    [placeholder]="'Effectuer une recherche'"
+    [value]="value"
+    (input)="onInput($event)"
+  />
+</div>

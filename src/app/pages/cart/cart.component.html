@@ -1,0 +1,74 @@
+<div class="mt-8 flex flex-col items-center">
+  <h1 class="main-title">Mon Panier</h1>
+  @if(cart.length === 0) {
+  <div class="mt-8 gap-4 w-full flex flex-col items-center">
+    <p class="text-neutral-600 text-sm">Aucun article</p>
+    <app-dark-button [value]="'Retour à la boutique'" link="/"
+      ><i class="fa-solid fa-arrow-left"></i
+    ></app-dark-button>
+  </div>
+  } @else {
+  <div class="mt-8 gap-4 grid grid-cols-1 lg:grid-cols-2 w-full">
+    @for (p of cart; track p.id) {
+    <app-cart-card [product]="p"></app-cart-card>
+    }
+  </div>
+  <a class="mt-8 text-button" (click)="clearCart()">Vider le panier</a>
+  <div class="mt-8 gap-8 w-full flex items-center">
+    <div class="alt-card">
+      <h3 class="card-title">Récapitulatif</h3>
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <p class="light-text">Total</p>
+          <p class="bold-text">
+            {{ totalPrice | currency : "EUR" }}
+          </p>
+        </div>
+      </div>
+      <div class="flex justify-end">
+        <app-dark-button
+          [value]="'Passer au paiement'"
+          (click)="showPaymentForm()"
+        />
+      </div>
+    </div>
+  </div>
+  @if(showForm) {
+  <div class="mt-8 gap-4 w-full flex flex-col items-center">
+    <form [formGroup]="OrderForm" (ngSubmit)="handleSubmit()" class="alt-card">
+      <h3 class="card-title">Informations</h3>
+      <div class="flex flex-col gap-4 sm:flex-row">
+        <div class="form-input">
+          <label class="light-text">Nom</label>
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Entrez votre nom"
+          />
+        </div>
+        <div class="form-input">
+          <label class="light-text">Adresse</label>
+          <input
+            type="text"
+            formControlName="adress"
+            placeholder="Entrez votre adresse"
+          />
+        </div>
+      </div>
+      <div class="flex justify-end">
+        <button
+          class="dark-button"
+          type="submit"
+          [ngClass]="{ 'opacity-50': OrderForm.invalid }"
+          [disabled]="OrderForm.invalid"
+        >
+          Commander
+        </button>
+      </div>
+    </form>
+  </div>
+  <a class="mt-8 text-button" (click)="hidePaymentForm()"
+    >Annuler la commande</a
+  >
+  } }
+</div>
