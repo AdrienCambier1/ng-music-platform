@@ -1,204 +1,56 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Product } from '../interfaces/product';
 import { BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
+  private http = inject(HttpClient);
+  private products: Product[] = [];
+  readonly url = 'http://localhost:3000/products';
+
   private storageCartKey = 'cart';
   private storageFavoritesKey = 'favorites';
 
-  products: Product[] = [
-    {
-      id: 1,
-      title: 'Abbey Road',
-      price: 19.99,
-      createdDate: new Date('1969-09-26'),
-      style: 'Rock',
-      quantity: 0,
-      author: 'The Beatles',
-      isFavorite: false,
-      imageUrl:
-        'https://images-eu.ssl-images-amazon.com/images/I/71RqsTiH2EL._AC_UL600_SR600,600_.jpg',
-    },
-    {
-      id: 2,
-      title: 'Thriller',
-      price: 19.99,
-      createdDate: new Date('1982-11-30'),
-      style: 'Pop',
-      quantity: 0,
-      author: 'Michael Jackson',
-      isFavorite: false,
-      imageUrl:
-        'https://mesvinyles.fr/10420-large_default/michael-jackson-thriller-lp-album-re-gat.jpg',
-    },
-    {
-      id: 3,
-      title: 'The Dark Side of the Moon',
-      price: 27.99,
-      createdDate: new Date('1973-03-01'),
-      style: 'Progressive Rock',
-      quantity: 0,
-      author: 'Pink Floyd',
-      isFavorite: false,
-      imageUrl:
-        'https://thesoundofvinyl.us/cdn/shop/products/pink_da09ef7c-b184-4044-b6bb-9d3c83760c65.png?v=1677177887',
-    },
-    {
-      id: 4,
-      title: 'Back in Black',
-      price: 21.99,
-      createdDate: new Date('1980-07-0'),
-      style: 'Hard Rock',
-      quantity: 0,
-      author: 'AC/DC',
-      isFavorite: false,
-      imageUrl:
-        'https://www.emp-online.fr/dw/image/v2/BBQV_PRD/on/demandware.static/-/Sites-master-emp/default/dw3db8363c/images/5/6/8/9/568904.jpg?sfrm=png',
-    },
-    {
-      id: 5,
-      title: 'The Wall',
-      price: 29.99,
-      createdDate: new Date('1979-11-30'),
-      style: 'Rock',
-      quantity: 0,
-      author: 'Pink Floyd',
-      isFavorite: false,
-      imageUrl:
-        'https://cdn.cultura.com/cdn-cgi/image/width=830/media/pim/TITELIVE/6_5099902988313.jpg',
-    },
-    {
-      id: 6,
-      title: 'Rumours',
-      price: 23.99,
-      createdDate: new Date('1977-02-04'),
-      style: 'Rock',
-      quantity: 0,
-      author: 'Fleetwood Mac',
-      isFavorite: false,
-      imageUrl:
-        'https://images-eu.ssl-images-amazon.com/images/I/71HWqbh0BLL._AC_UL600_SR600,600_.jpg',
-    },
-    {
-      id: 7,
-      title: 'Hotel California',
-      price: 22.49,
-      createdDate: new Date('1976-12-08'),
-      style: 'Rock',
-      quantity: 0,
-      author: 'Eagles',
-      isFavorite: false,
-      imageUrl:
-        'https://i.discogs.com/vVsUuF6LOlTgKSDV-UsOTi3cWyVjXHYCfhSk6OEezrc/rs:fit/g:sm/q:90/h:600/w:590/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE2Mzcy/MDItMTcwNTQ0MjY5/NC01MjA1LmpwZWc.jpeg',
-    },
-    {
-      id: 8,
-      title: 'The Velvet Underground & Nico',
-      price: 24.99,
-      createdDate: new Date('1967-03-12'),
-      style: 'Alternative Rock',
-      quantity: 0,
-      author: 'The Velvet Underground',
-      isFavorite: false,
-      imageUrl:
-        'https://vinylcollector.store/cdn/shop/products/the_velvet_underground_nico_the_velvet_underground_-and-_nico__high_3a36e0e2-6b69-4f96-a333-2de525fd3e7b.jpg?v=1657115311',
-    },
-    {
-      id: 9,
-      title: 'Blue',
-      price: 19.49,
-      createdDate: new Date('1971-06-22'),
-      style: 'Jazz',
-      quantity: 0,
-      author: 'Joni Mitchell',
-      isFavorite: false,
-      imageUrl:
-        'https://store.warnermusic.ca/cdn/shop/files/wmcstore2023_product_template_2f203efc-41e5-4fcd-a323-365b50acfa90.jpg?v=1702991978',
-    },
-    {
-      id: 10,
-      title: 'Kind of Blue',
-      price: 30.99,
-      createdDate: new Date('1959-08-17'),
-      style: 'Jazz',
-      quantity: 0,
-      author: 'Miles Davis',
-      isFavorite: false,
-      imageUrl:
-        'https://target.scene7.com/is/image/Target/GUEST_5efcaa9a-e578-4a64-bfb4-8b6bf6a28683?wid=488&hei=488&fmt=pjpeg',
-    },
-    {
-      id: 11,
-      title: 'Shaken By A Low Sound',
-      price: 26.99,
-      createdDate: new Date('2021-01-01'),
-      style: 'Folk Newgrass',
-      quantity: 0,
-      author: 'Crooked Still',
-      isFavorite: false,
-      imageUrl:
-        'https://www.normanrecords.com/artwork/medium/203/206953-crooked-still-shaken-by-a-low-sound.jpg',
-    },
-    {
-      id: 12,
-      title: 'Tocixity',
-      price: 18.99,
-      createdDate: new Date('2001-01-01'),
-      style: 'Nu Metal',
-      quantity: 0,
-      author: 'System Of A Dawn',
-      isFavorite: false,
-      imageUrl:
-        'https://static.thcdn.com/images/large/original//productimg/1600/1600/12377696-1904729781175291.jpg',
-    },
-    {
-      id: 13,
-      title: 'Moodswings In To Order',
-      price: 20.99,
-      createdDate: new Date('2020-01-01'),
-      style: 'Alternative R&B',
-      quantity: 0,
-      author: 'DPR IAN',
-      isFavorite: false,
-      imageUrl:
-        'https://i.scdn.co/image/ab67616d0000b2738ac536a8b7cdb157509399a7',
-    },
-  ];
-
-  private cartSubject = new BehaviorSubject<Product[]>(
-    this.loadCartFromLocalStorage()
-  );
+  private cartSubject = new BehaviorSubject<Product[]>(this.loadCartFromLocalStorage());
   cart$ = this.cartSubject.asObservable();
 
-  private favoritesSubject = new BehaviorSubject<Product[]>(
-    this.loadFavoritesFromLocalStorage()
-  );
+  private favoritesSubject = new BehaviorSubject<Product[]>(this.loadFavoritesFromLocalStorage());
   favorites$ = this.favoritesSubject.asObservable();
 
   constructor() {
-    this.loadInitialData();
+    this.loadInitialData();  // Chargement initial des données
   }
 
   private loadInitialData(): void {
     const storedProducts = localStorage.getItem('products');
     if (storedProducts) {
-      this.products = JSON.parse(storedProducts);
+      this.products = JSON.parse(storedProducts);  // Chargement des produits stockés dans localStorage
     }
-    this.cartSubject.next(this.loadCartFromLocalStorage());
-    this.favoritesSubject.next(this.loadFavoritesFromLocalStorage());
+    this.cartSubject.next(this.loadCartFromLocalStorage());  // Chargement du panier
+    this.favoritesSubject.next(this.loadFavoritesFromLocalStorage());  // Chargement des favoris
   }
 
-  getProducts(): Product[] {
-    return this.products;
+  // Récupérer les produits depuis l'API
+  getProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(this.url).pipe(
+      tap((products) => {
+        this.products = products;
+        localStorage.setItem('products', JSON.stringify(products)); // Sauvegarde des produits dans localStorage
+      })
+    );
   }
 
+  // Récupérer un produit spécifique par son ID
   getProduct(id: number): Product | undefined {
     return this.products.find((product) => product.id === id);
   }
 
+  // Ajouter un produit au panier
   addToCart(productId: number, quantity: number = 1): void {
     const product = this.getProduct(productId);
     if (product) {
@@ -208,10 +60,13 @@ export class ProductService {
     }
   }
 
+  // Nombre d'articles uniques dans le panier
   getCartItemCount(): number {
     const uniqueItems = new Set(this.cartSubject.value.map((item) => item.id));
     return uniqueItems.size;
   }
+
+  // Supprimer un produit du panier
   removeFromCart(productId: number): void {
     const product = this.getProduct(productId);
     if (product) {
@@ -221,35 +76,41 @@ export class ProductService {
     }
   }
 
+  // Récupérer les styles uniques
   getUniqueStyles(): string[] {
     const uniqueStyles = new Set(this.products.map((product) => product.style));
     return Array.from(uniqueStyles);
   }
 
+  // Vider le panier
   clearCart(): void {
     this.products.forEach((product) => (product.quantity = 0));
     this.updateCart();
     this.saveProductsToLocalStorage();
   }
 
+  // Vider les favoris
   clearFavorites(): void {
     this.products.forEach((product) => (product.isFavorite = false));
     this.updateFavorites();
     this.saveProductsToLocalStorage();
   }
 
+  // Mise à jour du panier
   private updateCart(): void {
     const cartItems = this.getCart();
     this.cartSubject.next(cartItems);
     this.saveCartToLocalStorage(cartItems);
   }
 
+  // Mise à jour des favoris
   private updateFavorites(): void {
     const favoriteItems = this.getFavorites();
     this.favoritesSubject.next(favoriteItems);
     this.saveFavoritesToLocalStorage(favoriteItems);
   }
 
+  // Incrémenter la quantité d'un produit
   incrementQuantity(productId: number): void {
     const product = this.getProduct(productId);
     if (product) {
@@ -259,6 +120,7 @@ export class ProductService {
     }
   }
 
+  // Décrémenter la quantité d'un produit
   decrementQuantity(productId: number): void {
     const product = this.getProduct(productId);
     if (product && product.quantity > 1) {
@@ -267,6 +129,8 @@ export class ProductService {
       this.saveProductsToLocalStorage();
     }
   }
+
+  // Calculer le prix total du panier
   calculateTotalPrice(): number {
     return this.getCart().reduce(
       (total, product) => total + product.price * product.quantity,
@@ -274,36 +138,40 @@ export class ProductService {
     );
   }
 
+  // Récupérer les articles dans le panier
   getCart(): Product[] {
     return this.products.filter((product) => product.quantity > 0);
   }
 
+  // Récupérer les produits favoris
   getFavorites(): Product[] {
     return this.products.filter((product) => product.isFavorite);
   }
 
+  // Ajouter/retirer un produit des favoris
   switchFavorite(product: Product): void {
     product.isFavorite = !product.isFavorite;
     this.updateFavorites();
     this.saveProductsToLocalStorage();
   }
 
+  // Sauvegarder le panier dans localStorage
   private saveCartToLocalStorage(cartItems: Product[]): void {
     const cartIds = cartItems.map((item) => item.id);
     localStorage.setItem(this.storageCartKey, JSON.stringify(cartIds));
   }
 
+  // Sauvegarder les favoris dans localStorage
   private saveFavoritesToLocalStorage(favoriteItems: Product[]): void {
-    localStorage.setItem(
-      this.storageFavoritesKey,
-      JSON.stringify(favoriteItems)
-    );
+    localStorage.setItem(this.storageFavoritesKey, JSON.stringify(favoriteItems));
   }
 
+  // Sauvegarder tous les produits dans localStorage
   private saveProductsToLocalStorage(): void {
     localStorage.setItem('products', JSON.stringify(this.products));
   }
 
+  // Charger les produits du panier depuis localStorage
   private loadCartFromLocalStorage(): Product[] {
     const storedCart = localStorage.getItem(this.storageCartKey);
     if (storedCart) {
@@ -315,6 +183,7 @@ export class ProductService {
     return [];
   }
 
+  // Charger les produits favoris depuis localStorage
   private loadFavoritesFromLocalStorage(): Product[] {
     const storedFavorites = localStorage.getItem(this.storageFavoritesKey);
     if (storedFavorites) {
