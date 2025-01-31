@@ -18,8 +18,8 @@ export class ProductService {
   private storageFavoritesKey = 'favorites';
 
   // Sujets pour les produits, le panier et les favoris
-  private productsSubject = new BehaviorSubject<Product[]>([]); // Nouveau BehaviorSubject pour les produits
-  products$ = this.productsSubject.asObservable(); // Observable exposé aux composants
+  private productsSubject = new BehaviorSubject<Product[]>([]);
+  products$ = this.productsSubject.asObservable();
 
   private cartSubject = new BehaviorSubject<Product[]>(
     this.loadCartFromLocalStorage()
