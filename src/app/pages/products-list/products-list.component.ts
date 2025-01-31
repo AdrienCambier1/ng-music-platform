@@ -33,14 +33,8 @@ export class ProductsListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // On s'abonne à l'Observable retourné par le service pour récupérer les produits
-    this.productService.getProducts().subscribe({
-      next: (products: Product[]) => {
-        this.products = products;
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement des produits :', error);
-      }
+    this.productService.products$.subscribe((products) => {
+      this.products = products;
     });
   }
 
