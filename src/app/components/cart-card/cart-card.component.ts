@@ -12,17 +12,19 @@ import { FormsModule } from '@angular/forms';
   styles: ``,
 })
 export class CartCardComponent {
-  @Input({ required: true }) product: Product = {
-    id: 0,
+  @Input() product: Product = {
+    id: '',
     title: '',
     price: 0,
-    createdDate: new Date(),
+    createdDate: new Date().toISOString(),
     style: '',
     quantity: 0,
     author: '',
     isFavorite: false,
     imageUrl: '',
   };
+  
+  
 
   productService = inject(ProductService);
   cartProducts = this.productService.getProducts();
@@ -35,7 +37,7 @@ export class CartCardComponent {
     this.productService.decrementQuantity(this.product.id);
   }
 
-  removeFromCart(productId: number) {
+  removeFromCart(productId: string) {
     this.productService.removeFromCart(productId);
   }
 }

@@ -13,19 +13,20 @@ import { TextButtonComponent } from '../text-button/text-button.component';
 })
 export class ProductCardComponent {
   @Input() product: Product = {
-    id: 0,
+    id: '',
     title: '',
     price: 0,
-    createdDate: new Date(),
+    createdDate: new Date().toISOString(),
     style: '',
     quantity: 0,
     author: '',
     isFavorite: false,
     imageUrl: '',
   };
+  
   productService = inject(ProductService);
 
-  addTocart(productId: number) {
+  addTocart(productId: string) {
     this.productService.addToCart(productId);
   }
 

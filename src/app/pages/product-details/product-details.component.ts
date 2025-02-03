@@ -22,7 +22,7 @@ export class ProductDetailsComponent {
 
   constructor(private route: ActivatedRoute, private datePipe: DatePipe) {
     this.route.params.subscribe((params) => {
-      const id = Number(params['id']);
+      const id = String(params['id']);
       this.product = this.productService.getProduct(id);
       if (this.product) {
         this.productDetails = [
@@ -40,7 +40,7 @@ export class ProductDetailsComponent {
     });
   }
 
-  addTocart(productId: number, quantity: number) {
+  addTocart(productId: string, quantity: number) {
     this.productService.addToCart(productId, quantity);
     this.quantity = 1;
   }

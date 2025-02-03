@@ -13,7 +13,7 @@ export class ProductService {
   private products: Product[] = [];
 
   // Clé de l'URL des produits et pour le stockage local
-  readonly url = 'http://localhost:3000/products';
+  readonly url = 'http://localhost:4000/products';
   private storageCartKey = 'cart';
   private storageFavoritesKey = 'favorites';
 
@@ -39,16 +39,27 @@ export class ProductService {
   // Chargement initial des données
   private loadInitialData(): void {
     const storedProducts = localStorage.getItem('products');
+    
     if (storedProducts) {
-      this.products = JSON.parse(storedProducts);
-      this.productsSubject.next(this.products); // Mettez à jour les abonnés avec les produits initialement chargés
+      try {
+        this.products = JSON.parse(storedProducts);
+        if (Array.isArray(this.products) && this.products.length > 0) {
+          this.productsSubject.next(this.products);
+          this.syncCartAndFavorites();
+        } else {
+          console.warn('Aucun produit valide trouvé dans localStorage, chargement depuis l\'API');
+          this.getProducts().subscribe();
+        }
+      } catch (error) {
+        console.error('Erreur lors de la lecture des produits depuis localStorage', error);
+        this.getProducts().subscribe();
+      }
+    } else {
+      console.log('Aucun produit trouvé dans localStorage, chargement depuis l\'API');
+      this.getProducts().subscribe();
     }
-
-    // Synchronisation du panier et des favoris
-    this.cartSubject.next(this.loadCartFromLocalStorage());
-    this.favoritesSubject.next(this.loadFavoritesFromLocalStorage());
   }
-
+  
   /// PRODUITS
 
   // Récupérer tous les produits depuis l'API et mettre à jour les données
@@ -64,7 +75,7 @@ export class ProductService {
   }
 
   // Récupérer un produit spécifique par son ID
-  getProduct(id: number): Product | undefined {
+  getProduct(id: string): Product | undefined {
     return this.products.find((product) => product.id === id);
   }
 
@@ -82,7 +93,7 @@ export class ProductService {
   /// PANIER
 
   // Ajouter un produit au panier
-  addToCart(productId: number, quantity: number = 1): void {
+  addToCart(productId: string, quantity: number = 1): void {
     const product = this.getProduct(productId);
     if (product) {
       product.quantity += quantity;
@@ -90,6 +101,7 @@ export class ProductService {
       this.saveProductsToLocalStorage();
     }
   }
+  
 
   // Récupérer le nombre d'articles dans le panier
   getCartItemCount(): number {
@@ -98,7 +110,7 @@ export class ProductService {
   }
 
   // Supprimer un produit du panier
-  removeFromCart(productId: number): void {
+  removeFromCart(productId: string): void {
     const product = this.getProduct(productId);
     if (product) {
       product.quantity = 0;
@@ -106,6 +118,7 @@ export class ProductService {
       this.saveProductsToLocalStorage();
     }
   }
+  
 
   // Vider le panier
   clearCart(): void {
@@ -131,13 +144,11 @@ export class ProductService {
     const cartIds = cartItems.map((item) => item.id);
     localStorage.setItem(this.storageCartKey, JSON.stringify(cartIds));
   }
-
   // Charger les produits du panier depuis le stockage local
   private loadCartFromLocalStorage(): Product[] {
     const storedCart = localStorage.getItem(this.storageCartKey);
     if (storedCart) {
-      const cartIds: number[] = JSON.parse(storedCart);
-      // Mettre à jour les quantités des produits dans le panier
+      const cartIds: string[] = JSON.parse(storedCart);
       cartIds.forEach((id) => {
         const product = this.products.find((p) => p.id === id);
         if (product) {
@@ -148,6 +159,7 @@ export class ProductService {
     }
     return [];
   }
+  
 
   /// FAVORIS
 
@@ -190,7 +202,7 @@ export class ProductService {
   private loadFavoritesFromLocalStorage(): Product[] {
     const storedFavorites = localStorage.getItem(this.storageFavoritesKey);
     if (storedFavorites) {
-      const favoriteIds: number[] = JSON.parse(storedFavorites);
+      const favoriteIds: string[] = JSON.parse(storedFavorites);
       this.products.forEach((product) => {
         product.isFavorite = favoriteIds.includes(product.id);
       });
@@ -198,11 +210,11 @@ export class ProductService {
     }
     return [];
   }
-
+  
   /// QUANTITÉ
 
   // Incrémenter la quantité d'un produit dans le panier
-  incrementQuantity(productId: number): void {
+  incrementQuantity(productId: string): void {
     const product = this.getProduct(productId);
     if (product) {
       product.quantity += 1;
@@ -210,9 +222,8 @@ export class ProductService {
       this.saveProductsToLocalStorage();
     }
   }
-
   // Décrémenter la quantité d'un produit dans le panier
-  decrementQuantity(productId: number): void {
+  decrementQuantity(productId: string): void {
     const product = this.getProduct(productId);
     if (product && product.quantity > 1) {
       product.quantity -= 1;

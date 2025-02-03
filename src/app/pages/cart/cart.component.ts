@@ -38,11 +38,11 @@ export class CartComponent {
     adress: new FormControl('', Validators.required),
   });
 
-  incrementQuantity(productId: number): void {
+  incrementQuantity(productId: string): void {
     this.productService.incrementQuantity(productId);
   }
 
-  decrementQuantity(productId: number): void {
+  decrementQuantity(productId: string): void {
     this.productService.decrementQuantity(productId);
   }
 

@@ -1,11 +1,11 @@
 export interface Product {
-  id: number;
+  id: string;
   title: string;
-  price: number;
-  createdDate: Date;
-  style: string;
-  quantity: number;
   author: string;
+  createdDate: string;
+  style?: string;
+  price: number;
+  quantity: number;
   isFavorite: boolean;
   imageUrl?: string;
 }
