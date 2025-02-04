@@ -19,17 +19,14 @@
       <div class="flex gap-4 items-center">
         <app-dark-button
           [value]="'Ajouter au panier'"
-          (click)="addTocart(product.id)"
+          (click)="addToCart()"
         ></app-dark-button>
         @if(product.isFavorite) {
-        <i
-          class="fa-solid fa-heart icon-button"
-          (click)="switchFavorite(product)"
-        ></i>
+        <i class="fa-solid fa-heart icon-button" (click)="switchFavorite()"></i>
         } @else {
         <i
           class="fa-regular fa-heart icon-button"
-          (click)="switchFavorite(product)"
+          (click)="switchFavorite()"
         ></i>
         }
       </div>

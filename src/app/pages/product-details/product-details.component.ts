@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { DarkButtonComponent } from '../../components/dark-button/dark-button.component';
 import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product.service';
@@ -9,44 +9,57 @@ import { NotFoundComponent } from '../not-found/not-found.component';
 
 @Component({
   selector: 'app-product-details',
+  standalone: true, // Permet une meilleure modularité
   imports: [DarkButtonComponent, LightButtonComponent, NotFoundComponent],
   templateUrl: './product-details.component.html',
   styles: [],
   providers: [DatePipe],
 })
 export class ProductDetailsComponent {
-  quantity: number = 1;
-  product: Product | any;
   productService = inject(ProductService);
-  productDetails: { label: string; value: string | Date | undefined }[] = [];
+  route = inject(ActivatedRoute);
+  datePipe = inject(DatePipe);
 
-  constructor(private route: ActivatedRoute, private datePipe: DatePipe) {
+  quantity: number = 1;
+  product: Product | undefined;
+  productDetails: { label: string; value: any }[] = [];
+
+  ngOnInit(): void {
     this.route.params.subscribe((params) => {
       const id = String(params['id']);
-      this.product = this.productService.getProduct(id);
-      if (this.product) {
-        this.productDetails = [
-          { label: 'Auteur', value: this.product.author },
-          { label: 'Style', value: this.product.style },
-          {
-            label: 'Date de création',
-            value: this.datePipe.transform(
-              this.product.createdDate,
-              'dd/MM/yyyy'
-            ),
-          },
-        ];
-      }
+      this.loadProductDetails(id);
     });
   }
 
-  addTocart(productId: string, quantity: number) {
-    this.productService.addToCart(productId, quantity);
-    this.quantity = 1;
+  private loadProductDetails(id: string): void {
+    this.product = this.productService.getProductById(id);
+
+    if (this.product) {
+      this.productDetails = [
+        { label: 'Auteur', value: this.product.author },
+        { label: 'Style', value: this.product.style },
+        {
+          label: 'Date de création',
+          value: this.datePipe.transform(
+            this.product.createdDate,
+            'dd/MM/yyyy'
+          ),
+        },
+      ];
+    }
   }
 
-  switchFavorite(product: Product) {
-    this.productService.switchFavorite(product);
+  addToCart() {
+    if (this.product) {
+      this.productService.addToCart(this.product.id, this.quantity);
+      this.quantity = 1;
+    }
+  }
+
+  switchFavorite() {
+    if (this.product) {
+      this.productService.switchFavorite(this.product.id);
+    }
   }
 
   incrementQuantity() {

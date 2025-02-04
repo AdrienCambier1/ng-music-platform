@@ -23,11 +23,8 @@ export class CartCardComponent {
     isFavorite: false,
     imageUrl: '',
   };
-  
-  
 
   productService = inject(ProductService);
-  cartProducts = this.productService.getProducts();
 
   increaseQuantity() {
     this.productService.incrementQuantity(this.product.id);
@@ -37,7 +34,7 @@ export class CartCardComponent {
     this.productService.decrementQuantity(this.product.id);
   }
 
-  removeFromCart(productId: string) {
-    this.productService.removeFromCart(productId);
+  removeFromCart() {
+    this.productService.removeFromCart(this.product.id);
   }
 }

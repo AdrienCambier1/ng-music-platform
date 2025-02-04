@@ -25,11 +25,9 @@ import { Router } from '@angular/router';
   styles: ``,
 })
 export class CartComponent {
-  cart: Product[] = [];
-  totalPrice: number = 0;
-  formatedTotalPrice: string = '';
   productService = inject(ProductService);
-  cartProducts = this.productService.getCart();
+  cart: Product[] = [];
+  totalPrice: string = '';
   showForm = false;
   router = inject(Router);
 
@@ -38,19 +36,10 @@ export class CartComponent {
     adress: new FormControl('', Validators.required),
   });
 
-  incrementQuantity(productId: string): void {
-    this.productService.incrementQuantity(productId);
-  }
-
-  decrementQuantity(productId: string): void {
-    this.productService.decrementQuantity(productId);
-  }
-
   ngOnInit(): void {
     this.productService.cart$.subscribe((cart) => {
       this.cart = cart;
-      this.totalPrice = this.productService.calculateTotalPrice();
-      this.formatedTotalPrice = this.totalPrice.toFixed(2);
+      this.totalPrice = this.productService.calculateTotalPrice().toFixed(2);
     });
   }
 
@@ -71,7 +60,7 @@ export class CartComponent {
     if (this.OrderForm.valid) {
       const { name, adress } = this.OrderForm.value;
       alert(
-        `${name}, votre commande d'un montant de ${this.formatedTotalPrice}€ a bien été enregistrée !`
+        `${name}, votre commande d'un montant de ${this.totalPrice}€ a bien été enregistrée !`
       );
       this.OrderForm.reset();
       this.showForm = false;

@@ -11,8 +11,8 @@ import { DarkButtonComponent } from '../../components/dark-button/dark-button.co
   styles: ``,
 })
 export class FavoritesComponent {
-  favorites: Product[] = [];
   productService = inject(ProductService);
+  favorites: Product[] = [];
 
   ngOnInit(): void {
     this.productService.favorites$.subscribe((favorites) => {

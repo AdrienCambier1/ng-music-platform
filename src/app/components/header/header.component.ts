@@ -10,8 +10,9 @@ import { ProductService } from '../../services/product.service';
   styles: ``,
 })
 export class HeaderComponent {
-  ProductService = inject(ProductService);
-  cartItemCount = 0;
+  productService = inject(ProductService);
+  cartItemCount: number = 0;
+
   scrollToTop() {
     window.scrollTo({
       top: 0,
@@ -20,8 +21,8 @@ export class HeaderComponent {
   }
 
   ngOnInit() {
-    this.ProductService.cart$.subscribe(() => {
-      this.cartItemCount = this.ProductService.getCartItemCount();
+    this.productService.cart$.subscribe(() => {
+      this.cartItemCount = this.productService.getCartItemCount();
     });
   }
 }

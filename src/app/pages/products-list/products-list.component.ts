@@ -21,7 +21,7 @@ import { Product } from '../../interfaces/product';
   templateUrl: './products-list.component.html',
   styles: ``,
 })
-export class ProductsListComponent implements OnInit {
+export class ProductsListComponent {
   productService = inject(ProductService);
   products: Product[] = [];
   searchValue: string = '';

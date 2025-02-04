@@ -23,14 +23,20 @@ export class ProductCardComponent {
     isFavorite: false,
     imageUrl: '',
   };
-  
+
   productService = inject(ProductService);
 
-  addTocart(productId: string) {
-    this.productService.addToCart(productId);
+  ngOnInit() {
+    this.productService.favorites$.subscribe((favorites) => {
+      this.product.isFavorite = favorites.some((p) => p.id === this.product.id);
+    });
   }
 
-  switchFavorite(product: Product) {
-    this.productService.switchFavorite(product);
+  addToCart() {
+    this.productService.addToCart(this.product.id);
+  }
+
+  switchFavorite() {
+    this.productService.switchFavorite(this.product.id);
   }
 }
