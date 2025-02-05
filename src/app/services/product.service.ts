@@ -30,17 +30,34 @@ export class ProductService {
   constructor() {
     this.loadInitialData();
   }
-
+  
   private loadInitialData(): void {
     this.http
-      .get<Product[]>(this.url)
-      .pipe(
-        tap((products) => {
-          this.productsSubject.next(products);
-          this.syncCartAndFavorites();
-        })
-      )
-      .subscribe();
+    .get<Product[]>(this.url)
+    .pipe(
+      tap((products) => {
+        this.productsSubject.next(products);
+        this.syncCartAndFavorites();
+      })
+    )
+    .subscribe();
+  }
+  
+  getProductById(id: string): Product | undefined {
+    return this.productsSubject.value.find((product) => product.id === id);
+  }
+
+  getProductDetailsById(id: string): Observable<Product> {
+    return this.http.get<Product>(`${this.url}/${id}`).pipe(
+      tap((product) => {
+        if (!product.tracks) {
+          this.http.get<any>(`http://localhost:4000/products/${id}/tracks`).subscribe((tracks) => {
+            product.tracks = tracks;
+            this.productsSubject.next([product]);
+          });
+        }
+      })
+    );
   }
 
   addToCart(productId: string, quantity: number = 1): void {
@@ -83,7 +100,7 @@ export class ProductService {
     );
     this.updateCart(cart);
   }
-
+  
   private updateCart(cart: Product[]): void {
     this.cartSubject.next(cart);
     localStorage.setItem(this.storageCartKey, JSON.stringify(cart));
@@ -120,9 +137,6 @@ export class ProductService {
     return JSON.parse(localStorage.getItem(this.storageFavoritesKey) || '[]');
   }
 
-  getProductById(id: string): Product | undefined {
-    return this.productsSubject.value.find((product) => product.id === id);
-  }
 
   calculateTotalPrice(): number {
     return this.cartSubject.value.reduce(

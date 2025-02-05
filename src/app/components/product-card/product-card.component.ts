@@ -22,6 +22,7 @@ export class ProductCardComponent {
     author: '',
     isFavorite: false,
     imageUrl: '',
+    artists: [],
   };
 
   productService = inject(ProductService);
