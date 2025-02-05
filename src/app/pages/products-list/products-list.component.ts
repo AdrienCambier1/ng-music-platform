@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { NgxPaginationModule } from 'ngx-pagination';
 import { ProductService } from '../../services/product.service';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { SearchInputComponent } from '../../components/search-input/search-input.component';
@@ -17,11 +18,14 @@ import { Product } from '../../interfaces/product';
     ProductFilterPipe,
     FormsModule,
     DropDownButtonComponent,
+    NgxPaginationModule,
   ],
   templateUrl: './products-list.component.html',
   styles: ``,
 })
 export class ProductsListComponent {
+  p: number = 1;
+  itemsPerPage: number = 20;
   productService = inject(ProductService);
   products: Product[] = [];
   searchValue: string = '';

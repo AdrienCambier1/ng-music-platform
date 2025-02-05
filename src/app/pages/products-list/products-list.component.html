@@ -6,9 +6,12 @@
   </div>
 
   <div class="mt-8 gap-4 grid grid-cols-1 lg:grid-cols-2 w-full">
-    @for(p of products | searchFilter: searchValue | productFilter:sortOrder;
+    @for(p of products | searchFilter: searchValue | productFilter:sortOrder | paginate: { itemsPerPage: itemsPerPage, currentPage: p };
     track p.id) {
     <app-product-card [product]="p" />
     }
+  </div>
+  <div class="mt-12 flex justify-center">
+    <pagination-controls (pageChange)="p = $event"></pagination-controls>
   </div>
 </div>

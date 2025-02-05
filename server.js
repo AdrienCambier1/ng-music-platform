@@ -92,9 +92,13 @@ function generatePriceFromId(id) {
 // Fonction pour récupérer les albums avec les genres
 async function fetchAlbums() {
     try {
-      const response = await axios.get(SPOTIFY_API_URL, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+        const response = await axios.get(SPOTIFY_API_URL, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            params: {
+              limit: 50,
+              offset: 50,
+            },
+          });
   
       // Pour chaque album, récupérer les genres des artistes
       const albumsWithGenres = await Promise.all(
