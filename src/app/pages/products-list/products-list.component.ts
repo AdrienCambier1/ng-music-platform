@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ProductService } from '../../services/product.service';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
@@ -8,6 +8,7 @@ import { SearchFilterPipe } from '../../pipes/search-filter.pipe';
 import { FormsModule } from '@angular/forms';
 import { DropDownButtonComponent } from '../../components/drop-down-button/drop-down-button.component';
 import { Product } from '../../interfaces/product';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-products-list',
@@ -19,12 +20,13 @@ import { Product } from '../../interfaces/product';
     FormsModule,
     DropDownButtonComponent,
     NgxPaginationModule,
+    CommonModule,
   ],
   templateUrl: './products-list.component.html',
   styles: ``,
 })
 export class ProductsListComponent {
-  p: number = 1;
+  currentPage: number = 1;
   itemsPerPage: number = 20;
   productService = inject(ProductService);
   products: Product[] = [];

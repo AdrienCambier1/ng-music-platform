@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Product } from '../interfaces/product';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -30,19 +30,19 @@ export class ProductService {
   constructor() {
     this.loadInitialData();
   }
-  
+
   private loadInitialData(): void {
     this.http
-    .get<Product[]>(this.url)
-    .pipe(
-      tap((products) => {
-        this.productsSubject.next(products);
-        this.syncCartAndFavorites();
-      })
-    )
-    .subscribe();
+      .get<Product[]>(this.url)
+      .pipe(
+        tap((products) => {
+          this.productsSubject.next(products);
+          this.syncCartAndFavorites();
+        })
+      )
+      .subscribe();
   }
-  
+
   getProductById(id: string): Product | undefined {
     return this.productsSubject.value.find((product) => product.id === id);
   }
@@ -51,10 +51,12 @@ export class ProductService {
     return this.http.get<Product>(`${this.url}/${id}`).pipe(
       tap((product) => {
         if (!product.tracks) {
-          this.http.get<any>(`http://localhost:4000/products/${id}/tracks`).subscribe((tracks) => {
-            product.tracks = tracks;
-            this.productsSubject.next([product]);
-          });
+          this.http
+            .get<any>(`http://localhost:4000/products/${id}/tracks`)
+            .subscribe((tracks) => {
+              product.tracks = tracks;
+              this.productsSubject.next([product]);
+            });
         }
       })
     );
@@ -100,7 +102,7 @@ export class ProductService {
     );
     this.updateCart(cart);
   }
-  
+
   private updateCart(cart: Product[]): void {
     this.cartSubject.next(cart);
     localStorage.setItem(this.storageCartKey, JSON.stringify(cart));
@@ -137,7 +139,6 @@ export class ProductService {
     return JSON.parse(localStorage.getItem(this.storageFavoritesKey) || '[]');
   }
 
-
   calculateTotalPrice(): number {
     return this.cartSubject.value.reduce(
       (total, product) => total + product.price * product.quantity,
@@ -154,6 +155,19 @@ export class ProductService {
     return this.cartSubject.value.reduce(
       (total, product) => total + product.quantity,
       0
+    );
+  }
+
+  getAllProducts(): Product[] {
+    return this.productsSubject.value;
+  }
+
+  getRandomProducts(): Observable<Product[]> {
+    return this.products$.pipe(
+      map((products) => {
+        const shuffled = products.sort(() => 0.5 - Math.random()); // Mélanger les produits
+        return shuffled.slice(0, 4); // Retourner les 4 premiers produits après le mélange
+      })
     );
   }
 }

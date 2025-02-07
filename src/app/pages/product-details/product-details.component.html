@@ -1,56 +1,74 @@
 @if(product) {
-  <div class="mt-8 flex flex-col items-center">
-    <h1 class="main-title">{{ product.title }}</h1>
-    <div class="mt-8 flex flex-col sm:flex-row gap-12">
-      <img [src]="product.imageUrl" class="img-card" />
-
-      <div class="flex flex-col gap-4 min-w-[20rem]">
-        <h3 class="card-title">Informations</h3>
-
-        @for(p of productDetails; track p.label) {
-          <div class="flex gap-2 items-center">
-            <p class="light-text">
-              <span class="font-semibold text-neutral-800">{{ p.label }}</span> : {{ p.value }}
-            </p>
-          </div>
-        }
-
-        <!-- Affichage des pistes de l'album -->
-        <h3 class="card-title mt-6">Pistes de l'album</h3>
-        @for(track of productTracks; track track.label) {
-          <div class="flex gap-2 items-center">
-            <p class="light-text">
-              <span class="font-semibold text-neutral-800">{{ track.label }}</span> : {{ track.value }}
-            </p>
-          </div>
-        }
-
-        <div class="flex gap-2 items-center">
-          <i class="fas fa-minus icon-button" (click)="decrementQuantity()"></i>
-          <p class="light-text">{{ quantity }}</p>
-          <i class="fas fa-plus icon-button" (click)="incrementQuantity()"></i>
-        </div>
-        <div class="flex justify-between items-center">
-          <div class="flex gap-4 items-center">
-            <app-dark-button
-              [value]="'Ajouter au panier'"
-              (click)="addToCart()"
-            />
-            @if(product.isFavorite) {
-              <i class="fa-solid fa-heart cursor-pointer" (click)="switchFavorite()"></i>
-            } @else {
-              <i class="fa-regular fa-heart cursor-pointer" (click)="switchFavorite()"></i>
-            }
-          </div>
-          <p class="bold-text">{{ product.price }} €</p>
-        </div>
-
-        <app-light-button [value]="'Retour à la boutique'" [link]="'/'">
-          <i class="fa-solid fa-arrow-left"></i>
-        </app-light-button>
+<div class="section">
+  <h1 class="main-title">{{ product.title }}</h1>
+  <div class="mt-8 flex flex-col sm:flex-row gap-12 w-[40rem] max-w-full">
+    <img [src]="product.imageUrl" class="img-card" />
+    <div class="flex flex-col gap-4 w-full">
+      <h3 class="card-title">Informations</h3>
+      @for(p of productDetails; track p.label) {
+      <div class="flex items-center">
+        <p class="light-text">
+          <span class="font-semibold text-neutral-800">{{ p.label }}</span> :
+          {{ p.value }}
+        </p>
       </div>
+      }
+      <div class="flex gap-2 items-center">
+        <i class="fas fa-minus icon-button" (click)="decrementQuantity()"></i>
+        <p class="light-text">{{ quantity }}</p>
+        <i class="fas fa-plus icon-button" (click)="incrementQuantity()"></i>
+      </div>
+      <div class="flex justify-between items-center">
+        <div class="flex gap-4 items-center">
+          <app-dark-button
+            [value]="'Ajouter au panier'"
+            (click)="addToCart()"
+          />
+          @if(product.isFavorite) {
+          <i
+            class="fa-solid fa-heart cursor-pointer"
+            (click)="switchFavorite()"
+          ></i>
+          } @else {
+          <i
+            class="fa-regular fa-heart cursor-pointer"
+            (click)="switchFavorite()"
+          ></i>
+          }
+        </div>
+        <p class="bold-text">{{ product.price }} €</p>
+      </div>
+      <app-light-button [value]="'Retour à la boutique'" [link]="'/'">
+        <i class="fa-solid fa-arrow-left"></i>
+      </app-light-button>
     </div>
   </div>
+</div>
+
+<div class="section bg-amber-50/50">
+  <h1 class="main-title">Tracklist</h1>
+  <div
+    class="mt-8 w-[40rem] max-w-full grid grid-cols-2 gap-4 border border-black bg-white p-4"
+  >
+    @for (track of productTracks; track track.label; let i = $index) {
+    <div class="flex flex-col border-l border-black/10 pl-2 hover:border-black">
+      <p class="light-text font-semibold !text-neutral-800">
+        {{ i + 1 }}. {{ track.label }}
+      </p>
+      <p class="light-text">{{ track.value }}</p>
+    </div>
+    }
+  </div>
+</div>
+
+<div class="section">
+  <h1 class="main-title">Nos suggestions</h1>
+  <div class="product-grid">
+    @for(p of randomProducts; track p.id) {
+    <app-product-card [product]="p" />
+    }
+  </div>
+</div>
 } @else {
-  <app-not-found />
+<app-not-found />
 }

@@ -16,7 +16,7 @@ body {
 }
 
 .main-title {
-  @apply text-2xl font-semibold text-neutral-800 relative w-fit;
+  @apply text-2xl font-semibold text-neutral-800 relative w-fit z-10;
 }
 
 .main-title::before {
@@ -31,7 +31,7 @@ body {
 }
 
 .text-button {
-  @apply text-neutral-800 text-sm flex gap-2 items-center relative cursor-pointer;
+  @apply text-neutral-800 text-sm flex gap-2 items-center relative cursor-pointer w-fit;
 }
 
 .text-button::before {
@@ -101,4 +101,20 @@ body {
 
 .img-card {
   @apply object-cover w-full sm:w-60 sm:h-60;
+}
+
+.section {
+  @apply flex flex-col items-center p-8;
+}
+
+.product-grid {
+  @apply mt-8 gap-8 grid grid-cols-1 lg:grid-cols-2 w-full;
+}
+
+.pagination-controls {
+  @apply h-fit;
+}
+
+.paginations-controls ul {
+  @apply !m-0;
 }

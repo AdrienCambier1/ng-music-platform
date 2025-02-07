@@ -9,7 +9,7 @@ import { Router, NavigationEnd } from '@angular/router';
   imports: [RouterOutlet, HeaderComponent, FooterComponent],
   template: `
     <app-header />
-    <main class="min-h-screen pt-16 p-8">
+    <main class="min-h-screen pt-16">
       <router-outlet />
     </main>
     <app-footer />

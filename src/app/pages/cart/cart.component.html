@@ -1,4 +1,4 @@
-<div class="mt-8 flex flex-col items-center">
+<div class="section">
   <h1 class="main-title">Mon Panier</h1>
   @if(cart.length === 0) {
   <div class="mt-8 gap-4 w-full flex flex-col items-center">
@@ -8,7 +8,7 @@
     ></app-dark-button>
   </div>
   } @else {
-  <div class="mt-8 gap-4 grid grid-cols-1 lg:grid-cols-2 w-full">
+  <div class="product-grid">
     @for (p of cart; track p.id) {
     <app-cart-card [product]="p"></app-cart-card>
     }

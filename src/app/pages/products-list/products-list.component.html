@@ -1,17 +1,20 @@
-<div class="mt-8 flex flex-col items-center">
+<div class="section">
   <h1 class="main-title">Les Vinyles</h1>
   <div class="mt-8 w-full flex gap-4 items-center justify-between">
     <app-search-input [(value)]="searchValue" class="flex-1" />
     <app-drop-down-button [buttonLabel]="'Trier par'" [options]="sortOptions" />
   </div>
-
-  <div class="mt-8 gap-4 grid grid-cols-1 lg:grid-cols-2 w-full">
-    @for(p of products | searchFilter: searchValue | productFilter:sortOrder | paginate: { itemsPerPage: itemsPerPage, currentPage: p };
-    track p.id) {
+  <div class="product-grid">
+    @for(p of products | searchFilter: searchValue | productFilter:sortOrder |
+    paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; track
+    p.id) {
     <app-product-card [product]="p" />
     }
   </div>
   <div class="mt-12 flex justify-center">
-    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    <pagination-controls
+      class="pagination-controls"
+      (pageChange)="currentPage = $event"
+    />
   </div>
 </div>
