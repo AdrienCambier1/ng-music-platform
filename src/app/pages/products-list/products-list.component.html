@@ -1,3 +1,4 @@
+@if(isLoaded){
 <div class="section">
   <h1 class="main-title">Les Vinyles</h1>
   <div class="mt-8 w-full flex gap-4 items-center justify-between">
@@ -11,10 +12,15 @@
     <app-product-card [product]="p" />
     }
   </div>
-  <div class="mt-12 flex justify-center">
-    <pagination-controls
-      class="pagination-controls"
-      (pageChange)="currentPage = $event"
-    />
-  </div>
+  <app-pagination
+    [currentPage]="currentPage"
+    [itemsPerPage]="itemsPerPage"
+    [totalItems]="products.length"
+    (pageChange)="onPageChange($event)"
+  ></app-pagination>
 </div>
+} @else {
+<div class="absolute top-0 h-screen w-screen flex items-center justify-center">
+  <span class="loader"></span>
+</div>
+}

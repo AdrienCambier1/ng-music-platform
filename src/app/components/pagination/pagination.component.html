@@ -1,0 +1,19 @@
+<div class="mt-12 flex justify-center items-center gap-8">
+  <app-text-button
+    [endValue]="'Précédent'"
+    (click)="goToPreviousPage()"
+    [disabled]="isPreviousDisabled()"
+  >
+    <i class="fa-solid fa-arrow-left text-neutral-800"></i>
+  </app-text-button>
+
+  <p class="light-text">Page {{ currentPage }}</p>
+
+  <app-text-button
+    [value]="'Suivant'"
+    (click)="goToNextPage()"
+    [disabled]="isNextDisabled()"
+  >
+    <i class="fa-solid fa-arrow-right text-neutral-800"></i>
+  </app-text-button>
+</div>

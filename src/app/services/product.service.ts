@@ -27,20 +27,13 @@ export class ProductService {
   );
   favorites$ = this.favoritesSubject.asObservable();
 
-  constructor() {
-    this.loadInitialData();
-  }
-
-  private loadInitialData(): void {
-    this.http
-      .get<Product[]>(this.url)
-      .pipe(
-        tap((products) => {
-          this.productsSubject.next(products);
-          this.syncCartAndFavorites();
-        })
-      )
-      .subscribe();
+  loadInitialData(): Observable<Product[]> {
+    return this.http.get<Product[]>(this.url).pipe(
+      tap((products) => {
+        this.productsSubject.next(products);
+        this.syncCartAndFavorites();
+      })
+    );
   }
 
   getProductById(id: string): Product | undefined {

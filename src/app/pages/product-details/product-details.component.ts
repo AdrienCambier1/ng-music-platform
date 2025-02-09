@@ -6,8 +6,6 @@ import { Product } from '../../interfaces/product';
 import { DarkButtonComponent } from '../../components/dark-button/dark-button.component';
 import { LightButtonComponent } from '../../components/light-button/light-button.component';
 import { NotFoundComponent } from '../not-found/not-found.component';
-import { DropDownButtonComponent } from '../../components/drop-down-button/drop-down-button.component';
-import { TextButtonComponent } from '../../components/text-button/text-button.component';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 
 @Component({
@@ -17,8 +15,6 @@ import { ProductCardComponent } from '../../components/product-card/product-card
     DarkButtonComponent,
     LightButtonComponent,
     NotFoundComponent,
-    DropDownButtonComponent,
-    TextButtonComponent,
     ProductCardComponent,
   ],
   templateUrl: './product-details.component.html',
@@ -29,11 +25,23 @@ export class ProductDetailsComponent implements OnInit {
   productService = inject(ProductService);
   route = inject(ActivatedRoute);
   datePipe = inject(DatePipe);
-  product: Product | undefined;
   randomProducts: Product[] = [];
   quantity: number = 1;
+  isLoaded: boolean = false;
   productDetails: { label: string; value: any }[] = [];
   productTracks: { label: string; value: any }[] = [];
+  product: Product = {
+    id: '',
+    title: '',
+    price: 0,
+    createdDate: new Date().toISOString(),
+    style: '',
+    quantity: 0,
+    author: '',
+    isFavorite: false,
+    imageUrl: '',
+    artists: [],
+  };
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -50,6 +58,8 @@ export class ProductDetailsComponent implements OnInit {
       this.setProductDetails();
       this.setProductTracks();
       this.loadRandomProducts();
+      this.loadFavoriteState();
+      this.isLoaded = true;
     });
   }
 
@@ -99,6 +109,12 @@ export class ProductDetailsComponent implements OnInit {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes} min ${remainingSeconds} sec`;
+  }
+
+  private loadFavoriteState(): void {
+    this.productService.favorites$.subscribe((favorites) => {
+      this.product.isFavorite = favorites.some((p) => p.id === this.product.id);
+    });
   }
 
   addToCart(): void {

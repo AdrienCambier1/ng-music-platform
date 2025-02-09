@@ -1,1 +1,6 @@
-<a routerLink="{{ link }}" class="text-button">{{ value }}<ng-content /></a>
+<a
+  routerLink="{{ link }}"
+  class="text-button {{ disabled && 'opacity-75 pointer-events-none' }}"
+>
+  {{ value }}<ng-content />{{ endValue }}
+</a>

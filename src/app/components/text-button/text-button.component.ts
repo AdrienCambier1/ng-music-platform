@@ -10,4 +10,6 @@ import { RouterModule } from '@angular/router';
 export class TextButtonComponent {
   @Input() value: string = '';
   @Input() link: string = '';
+  @Input() disabled: boolean = false;
+  @Input() endValue: string = '';
 }
