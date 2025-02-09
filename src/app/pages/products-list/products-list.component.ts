@@ -46,12 +46,18 @@ export class ProductsListComponent {
   }
 
   private loadProducts(): void {
-    this.productService.loadInitialData().subscribe((products) => {
-      if (!products) return;
+    this.productService
+      .loadInitialData()
+      .pipe(
+        finalize(() => {
+          this.isLoaded = true;
+        })
+      )
+      .subscribe((products) => {
+        if (!products) return;
 
-      this.products = products;
-      this.isLoaded = true;
-    });
+        this.products = products;
+      });
   }
 
   changeSortOrder(order: string) {

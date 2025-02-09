@@ -7,6 +7,7 @@ import { DarkButtonComponent } from '../../components/dark-button/dark-button.co
 import { LightButtonComponent } from '../../components/light-button/light-button.component';
 import { NotFoundComponent } from '../not-found/not-found.component';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-product-details',
@@ -51,16 +52,22 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   private loadProductDetails(id: string): void {
-    this.productService.getProductDetailsById(id).subscribe((product) => {
-      if (!product) return;
+    this.productService
+      .getProductDetailsById(id)
+      .pipe(
+        finalize(() => {
+          this.isLoaded = true;
+        })
+      )
+      .subscribe((product) => {
+        if (!product) return;
 
-      this.product = product;
-      this.setProductDetails();
-      this.setProductTracks();
-      this.loadRandomProducts();
-      this.loadFavoriteState();
-      this.isLoaded = true;
-    });
+        this.product = product;
+        this.setProductDetails();
+        this.setProductTracks();
+        this.loadRandomProducts();
+        this.loadFavoriteState();
+      });
   }
 
   private setProductDetails(): void {
