@@ -3,11 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node server.js",
-    "build": "ng build --configuration=production",
+    "start": "ng serve",
+    "build": "concurrently \"ng build\" \"node server.js\"",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "dev": "concurrently \"ng serve\" \"node server.js\""
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
