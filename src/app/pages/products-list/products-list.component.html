@@ -20,7 +20,10 @@
     (pageChange)="onPageChange($event)"
   ></app-pagination>
   } @else {
-  <a class="mt-8 text-button" (click)="clearSearch()">Vider la recherche</a>
+  <div class="mt-8 gap-4 w-full flex flex-col items-center">
+    <p class="text-neutral-600 text-sm">Aucun résultat</p>
+    <app-dark-button [value]="'Vider la recherche'" (click)="clearSearch()" />
+  </div>
   }
 </div>
 } @else {

@@ -8,6 +8,7 @@ import { Product } from '../../interfaces/product';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { SearchInputComponent } from '../../components/search-input/search-input.component';
 import { DropDownButtonComponent } from '../../components/drop-down-button/drop-down-button.component';
+import { DarkButtonComponent } from '../../components/dark-button/dark-button.component';
 import { PaginationComponent } from '../../components/pagination/pagination.component';
 import { ProductFilterPipe } from '../../pipes/product-filter.pipe';
 import { SearchFilterPipe } from '../../pipes/search-filter.pipe';
@@ -21,6 +22,7 @@ import { SearchFilterPipe } from '../../pipes/search-filter.pipe';
     ProductCardComponent,
     SearchInputComponent,
     DropDownButtonComponent,
+    DarkButtonComponent,
     PaginationComponent,
     SearchFilterPipe,
     ProductFilterPipe,
