@@ -1,28 +1,29 @@
 import { Component, inject } from '@angular/core';
-import { DarkButtonComponent } from '../dark-button/dark-button.component';
 import { RouterModule } from '@angular/router';
-import { ProductService } from '../../services/product.service';
+import { CartService } from '../../services/cart.service';
+import { DarkButtonComponent } from '../dark-button/dark-button.component';
 
 @Component({
   selector: 'app-header',
-  imports: [DarkButtonComponent, RouterModule],
+  imports: [RouterModule, DarkButtonComponent],
   templateUrl: './header.component.html',
   styles: ``,
 })
 export class HeaderComponent {
-  productService = inject(ProductService);
+  cartService = inject(CartService);
+
   cartItemCount: number = 0;
 
-  scrollToTop() {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
+  ngOnInit(): void {
+    this.cartService.cart$.subscribe(() => {
+      this.cartItemCount = this.cartService.getCartItemCount();
     });
   }
 
-  ngOnInit() {
-    this.productService.cart$.subscribe(() => {
-      this.cartItemCount = this.productService.getCartItemCount();
+  scrollToTop(): void {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
     });
   }
 }

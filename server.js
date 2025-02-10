@@ -1,20 +1,17 @@
 const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
-require("dotenv").config();
-
 const app = express();
 const port = 4000;
+const cors = require("cors");
+require("dotenv").config();
+const axios = require("axios");
 
-// Variables d'authentification Spotify
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
-let accessToken = null;
-let tokenExpiration = null; // Pour gérer l'expiration du token
 
+let accessToken = null;
 const SPOTIFY_API_URL = "https://api.spotify.com/v1/browse/new-releases";
 
-// Configuration de CORS pour Angular
+// Activer CORS et configurer le client Angular
 app.use(
   cors({
     origin: "http://localhost:4200",
@@ -23,73 +20,74 @@ app.use(
   })
 );
 
-// Middleware de gestion des erreurs
+// Middleware pour gérer les erreurs
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send("Erreur serveur !");
+  res.status(500).send("Quelque chose s'est mal passé !");
 });
 
-// Démarrer le serveur
 app.listen(port, () => {
-  console.log(`🚀 Serveur démarré sur http://localhost:${port}`);
+  console.log(`Application à l'écoute sur le port ${port}`);
 });
 
-// Middleware pour s'assurer que le token Spotify est valide
-async function ensureAccessToken() {
-  if (!accessToken || Date.now() >= tokenExpiration) {
-    await getAccessToken();
-  }
-}
-
-// Obtenir un token d'accès Spotify (avec expiration)
-async function getAccessToken() {
+app.get("/products", async (req, res) => {
   try {
-    const response = await axios.post(
-      "https://accounts.spotify.com/api/token",
-      "grant_type=client_credentials",
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization:
-            "Basic " +
-            Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64"),
-        },
-      }
-    );
-
-    accessToken = response.data.access_token;
-    tokenExpiration = Date.now() + response.data.expires_in * 1000; // Conversion en ms
-    console.log("🔑 Nouveau token Spotify obtenu !");
+    if (!accessToken) await getAccessToken();
+    const albums = await fetchAlbums();
+    res.json(albums);
   } catch (error) {
-    console.error(
-      "❌ Erreur lors de l'obtention du token Spotify:",
-      error.message
-    );
-    throw new Error("Impossible d'obtenir un token d'accès");
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la récupération des produits" });
   }
-}
+});
 
-// Utilitaire pour gérer l'erreur 429 (rate limit)
-async function handleRateLimit(error, retryFunction, attempt = 1) {
-  if (error.response && error.response.status === 429) {
-    const retryAfter = error.response.headers["retry-after"] || 2; // Secondes d'attente
-    const waitTime = Math.min(retryAfter * 1000, 60000); // Max 60 sec
+app.get("/products/:id", async (req, res) => {
+  const albumId = req.params.id;
 
-    console.warn(`⚠️ Trop de requêtes. Attente de ${waitTime / 1000}s...`);
-    await new Promise((resolve) => setTimeout(resolve, waitTime));
-
-    return retryFunction(attempt + 1);
-  }
-  throw error;
-}
-
-// Récupérer les albums (avec retry en cas de 429)
-async function fetchAlbums(attempt = 1) {
   try {
-    await ensureAccessToken();
+    if (!accessToken) await getAccessToken();
+    const albumDetails = await fetchAlbumDetails(albumId);
+    res.json(albumDetails);
+  } catch (error) {
+    res.status(404).json({ error: "Produit non trouvé" });
+  }
+});
+
+async function getAccessToken() {
+  const response = await axios.post(
+    "https://accounts.spotify.com/api/token",
+    null,
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization:
+          "Basic " +
+          Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64"),
+      },
+      params: { grant_type: "client_credentials" },
+    }
+  );
+  accessToken = response.data.access_token;
+}
+
+function generatePriceFromId(id) {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = id.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const price = Math.abs(hash % 90) + 10;
+  return price.toFixed(2);
+}
+
+async function fetchAlbums() {
+  try {
     const response = await axios.get(SPOTIFY_API_URL, {
       headers: { Authorization: `Bearer ${accessToken}` },
-      params: { limit: 20 },
+      params: {
+        limit: 50,
+        offset: 50,
+      },
     });
 
     return response.data.albums.items.map((album) => ({
@@ -98,17 +96,20 @@ async function fetchAlbums(attempt = 1) {
       author: album.artists.map((artist) => artist.name).join(", "),
       createdDate: album.release_date,
       price: generatePriceFromId(album.id),
+      style: "Album",
       imageUrl: album.images[0]?.url || "",
     }));
   } catch (error) {
-    return handleRateLimit(error, fetchAlbums, attempt);
+    console.error(
+      "Erreur lors de la récupération des albums Spotify",
+      error.message
+    );
+    return [];
   }
 }
 
-// Récupérer les détails d'un album
-async function fetchAlbumDetails(albumId, attempt = 1) {
+async function fetchAlbumDetails(albumId) {
   try {
-    await ensureAccessToken();
     const response = await axios.get(
       `https://api.spotify.com/v1/albums/${albumId}`,
       {
@@ -117,11 +118,12 @@ async function fetchAlbumDetails(albumId, attempt = 1) {
     );
 
     const album = response.data;
+
     const tracks = album.tracks.items.map((track) => ({
-      id: track.id,
-      name: track.name,
-      duration: track.duration_ms,
-      previewUrl: track.preview_url,
+      trackId: track.id,
+      trackName: track.name,
+      trackDuration: track.duration_ms,
+      trackPreviewUrl: track.preview_url,
     }));
 
     return {
@@ -129,41 +131,16 @@ async function fetchAlbumDetails(albumId, attempt = 1) {
       title: album.name,
       author: album.artists.map((artist) => artist.name).join(", "),
       createdDate: album.release_date,
+      style: "Album",
       price: generatePriceFromId(album.id),
       imageUrl: album.images[0]?.url || "",
-      tracks,
+      tracks: tracks,
     };
   } catch (error) {
-    return handleRateLimit(error, () => fetchAlbumDetails(albumId, attempt));
+    console.error(
+      "Erreur lors de la récupération des détails de l'album",
+      error.message
+    );
+    throw new Error("Produit non trouvé");
   }
 }
-
-// Générer un prix aléatoire à partir de l'ID de l'album
-function generatePriceFromId(id) {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) {
-    hash = id.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return (Math.abs(hash % 90) + 10).toFixed(2);
-}
-
-// Routes API
-app.get("/products", async (req, res) => {
-  try {
-    const albums = await fetchAlbums();
-    res.json(albums);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Erreur lors de la récupération des albums" });
-  }
-});
-
-app.get("/products/:id", async (req, res) => {
-  try {
-    const albumDetails = await fetchAlbumDetails(req.params.id);
-    res.json(albumDetails);
-  } catch (error) {
-    res.status(404).json({ error: "Album non trouvé" });
-  }
-});

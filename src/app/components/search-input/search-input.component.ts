@@ -12,7 +12,7 @@ export class SearchInputComponent {
   @Output() valueChange = new EventEmitter<string>();
 
   private storageSearchKey = 'searchValue';
-  
+
   ngOnInit(): void {
     const storedValue = localStorage.getItem(this.storageSearchKey);
     if (storedValue) {
@@ -20,10 +20,17 @@ export class SearchInputComponent {
       this.valueChange.emit(this.value);
     }
   }
+
   onInput(event: Event) {
     const target = event.target as HTMLInputElement;
     this.value = target.value;
     localStorage.setItem(this.storageSearchKey, this.value);
+    this.valueChange.emit(this.value);
+  }
+
+  clearSearch(): void {
+    this.value = '';
+    localStorage.removeItem(this.storageSearchKey);
     this.valueChange.emit(this.value);
   }
 }

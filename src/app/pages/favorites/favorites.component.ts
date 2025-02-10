@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { ProductService } from '../../services/product.service';
-import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { Product } from '../../interfaces/product';
+import { FavoritesService } from '../../services/favorites.service';
+import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { DarkButtonComponent } from '../../components/dark-button/dark-button.component';
 
 @Component({
@@ -11,16 +11,16 @@ import { DarkButtonComponent } from '../../components/dark-button/dark-button.co
   styles: ``,
 })
 export class FavoritesComponent {
-  productService = inject(ProductService);
+  favoritesService = inject(FavoritesService);
   favorites: Product[] = [];
 
   ngOnInit(): void {
-    this.productService.favorites$.subscribe((favorites) => {
+    this.favoritesService.favorites$.subscribe((favorites) => {
       this.favorites = favorites;
     });
   }
 
   clearFavorites(): void {
-    this.productService.clearFavorites();
+    this.favoritesService.clearFavorites();
   }
 }

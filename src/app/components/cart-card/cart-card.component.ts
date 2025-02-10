@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { Product } from '../../interfaces/product';
-import { ProductService } from '../../services/product.service';
-import { DarkButtonComponent } from '../dark-button/dark-button.component';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Product } from '../../interfaces/product';
+import { CartService } from '../../services/cart.service';
+import { FavoritesService } from '../../services/favorites.service';
+import { DarkButtonComponent } from '../dark-button/dark-button.component';
 
 @Component({
   selector: 'app-cart-card',
@@ -25,17 +26,18 @@ export class CartCardComponent {
     artists: [],
   };
 
-  productService = inject(ProductService);
+  cartService = inject(CartService);
+  favoritesService = inject(FavoritesService);
 
   increaseQuantity() {
-    this.productService.incrementQuantity(this.product.id);
+    this.cartService.incrementQuantity(this.product.id);
   }
 
   decreaseQuantity() {
-    this.productService.decrementQuantity(this.product.id);
+    this.cartService.decrementQuantity(this.product.id);
   }
 
   removeFromCart() {
-    this.productService.removeFromCart(this.product.id);
+    this.cartService.removeFromCart(this.product.id);
   }
 }

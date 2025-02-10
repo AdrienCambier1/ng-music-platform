@@ -1,8 +1,9 @@
 import { Component, inject, Input } from '@angular/core';
-import { Product } from '../../interfaces/product';
-import { ProductService } from '../../services/product.service';
-import { DarkButtonComponent } from '../dark-button/dark-button.component';
 import { RouterModule } from '@angular/router';
+import { Product } from '../../interfaces/product';
+import { CartService } from '../../services/cart.service';
+import { FavoritesService } from '../../services/favorites.service';
+import { DarkButtonComponent } from '../dark-button/dark-button.component';
 import { TextButtonComponent } from '../text-button/text-button.component';
 
 @Component({
@@ -25,19 +26,20 @@ export class ProductCardComponent {
     artists: [],
   };
 
-  productService = inject(ProductService);
+  cartService = inject(CartService);
+  favoritesService = inject(FavoritesService);
 
   ngOnInit() {
-    this.productService.favorites$.subscribe((favorites) => {
+    this.favoritesService.favorites$.subscribe((favorites) => {
       this.product.isFavorite = favorites.some((p) => p.id === this.product.id);
     });
   }
 
   addToCart() {
-    this.productService.addToCart(this.product.id);
+    this.cartService.addToCart(this.product.id);
   }
 
   switchFavorite() {
-    this.productService.switchFavorite(this.product.id);
+    this.favoritesService.switchFavorite(this.product.id);
   }
 }

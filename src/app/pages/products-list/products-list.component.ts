@@ -1,41 +1,45 @@
-import { Component, inject } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { finalize } from 'rxjs';
 import { ProductService } from '../../services/product.service';
+import { Product } from '../../interfaces/product';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { SearchInputComponent } from '../../components/search-input/search-input.component';
+import { DropDownButtonComponent } from '../../components/drop-down-button/drop-down-button.component';
+import { PaginationComponent } from '../../components/pagination/pagination.component';
 import { ProductFilterPipe } from '../../pipes/product-filter.pipe';
 import { SearchFilterPipe } from '../../pipes/search-filter.pipe';
-import { FormsModule } from '@angular/forms';
-import { DropDownButtonComponent } from '../../components/drop-down-button/drop-down-button.component';
-import { Product } from '../../interfaces/product';
-import { CommonModule } from '@angular/common';
-import { PaginationComponent } from '../../components/pagination/pagination.component';
-import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-products-list',
   imports: [
+    CommonModule,
+    FormsModule,
+    NgxPaginationModule,
     ProductCardComponent,
     SearchInputComponent,
+    DropDownButtonComponent,
+    PaginationComponent,
     SearchFilterPipe,
     ProductFilterPipe,
-    FormsModule,
-    DropDownButtonComponent,
-    NgxPaginationModule,
-    CommonModule,
-    PaginationComponent,
   ],
   templateUrl: './products-list.component.html',
   styles: ``,
 })
 export class ProductsListComponent {
-  currentPage: number = 1;
-  itemsPerPage: number = 20;
+  @ViewChild(SearchInputComponent) searchInputComponent!: SearchInputComponent;
+
   productService = inject(ProductService);
+
   products: Product[] = [];
   searchValue: string = '';
-  sortOrder: any = 'asc';
+  sortOrder: string | any = 'asc';
   isLoaded: boolean = false;
+  currentPage: number = 1;
+  itemsPerPage: number = 20;
+
   sortOptions = [
     { label: 'Croissant', action: () => this.changeSortOrder('asc') },
     { label: 'Décroissant', action: () => this.changeSortOrder('desc') },
@@ -48,24 +52,23 @@ export class ProductsListComponent {
   private loadProducts(): void {
     this.productService
       .loadInitialData()
-      .pipe(
-        finalize(() => {
-          this.isLoaded = true;
-        })
-      )
+      .pipe(finalize(() => (this.isLoaded = true)))
       .subscribe((products) => {
         if (!products) return;
-
         this.products = products;
       });
   }
 
-  changeSortOrder(order: string) {
+  changeSortOrder(order: string): void {
     console.log('Tri changé en :', order);
     this.sortOrder = order;
   }
 
   onPageChange(newPage: number): void {
     this.currentPage = newPage;
+  }
+
+  clearSearch(): void {
+    this.searchInputComponent.clearSearch();
   }
 }

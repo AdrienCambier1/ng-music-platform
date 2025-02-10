@@ -5,6 +5,7 @@
     <app-search-input [(value)]="searchValue" class="flex-1" />
     <app-drop-down-button [buttonLabel]="'Trier par'" [options]="sortOptions" />
   </div>
+  @if((products | searchFilter: searchValue).length > 0) {
   <div class="product-grid">
     @for(p of products | searchFilter: searchValue | productFilter:sortOrder |
     paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; track
@@ -18,6 +19,9 @@
     [totalItems]="products.length"
     (pageChange)="onPageChange($event)"
   ></app-pagination>
+  } @else {
+  <a class="mt-8 text-button" (click)="clearSearch()">Vider la recherche</a>
+  }
 </div>
 } @else {
 <div class="absolute top-0 h-screen w-screen flex items-center justify-center">

@@ -1,35 +1,36 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductService } from '../../services/product.service';
-import { CartCardComponent } from '../../components/cart-card/cart-card.component';
-import { DarkButtonComponent } from '../../components/dark-button/dark-button.component';
+import { Router } from '@angular/router';
 import {
   FormGroup,
+  FormControl,
   Validators,
   ReactiveFormsModule,
-  FormControl,
 } from '@angular/forms';
 import { Product } from '../../interfaces/product';
-import { Router } from '@angular/router';
+import { CartService } from '../../services/cart.service';
+import { CartCardComponent } from '../../components/cart-card/cart-card.component';
+import { DarkButtonComponent } from '../../components/dark-button/dark-button.component';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
   imports: [
-    CartCardComponent,
     CommonModule,
-    DarkButtonComponent,
     ReactiveFormsModule,
+    CartCardComponent,
+    DarkButtonComponent,
   ],
   templateUrl: './cart.component.html',
   styles: ``,
 })
 export class CartComponent {
-  productService = inject(ProductService);
+  cartService = inject(CartService);
+  router = inject(Router);
+
   cart: Product[] = [];
   totalPrice: string = '';
   showForm = false;
-  router = inject(Router);
 
   OrderForm = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -37,26 +38,26 @@ export class CartComponent {
   });
 
   ngOnInit(): void {
-    this.productService.cart$.subscribe((cart) => {
+    this.cartService.cart$.subscribe((cart) => {
       this.cart = cart;
-      this.totalPrice = this.productService.calculateTotalPrice().toFixed(2);
+      this.totalPrice = this.cartService.calculateTotalPrice().toFixed(2);
     });
   }
 
-  showPaymentForm() {
+  showPaymentForm(): void {
     this.showForm = true;
   }
 
-  hidePaymentForm() {
+  hidePaymentForm(): void {
     this.OrderForm.reset();
     this.showForm = false;
   }
 
-  clearCart() {
-    this.productService.clearCart();
+  clearCart(): void {
+    this.cartService.clearCart();
   }
 
-  handleSubmit() {
+  handleSubmit(): void {
     if (this.OrderForm.valid) {
       const { name, adress } = this.OrderForm.value;
       alert(
