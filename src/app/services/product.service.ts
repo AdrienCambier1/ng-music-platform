@@ -5,6 +5,7 @@ import { Product } from '../interfaces/product';
 import { tap, map } from 'rxjs/operators';
 import { CartService } from './cart.service';
 import { FavoritesService } from './favorites.service';
+import { SpotifyService } from './spotify.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,8 +14,7 @@ export class ProductService {
   injector = inject(Injector);
   _cartService?: CartService;
   _favoritesService?: FavoritesService;
-  private http = inject(HttpClient);
-  private readonly url = 'http://localhost:4000/products';
+  private spotifyService = inject(SpotifyService);
 
   private productsSubject = new BehaviorSubject<Product[]>([]);
   products$ = this.productsSubject.asObservable();
@@ -33,8 +33,12 @@ export class ProductService {
     return this._favoritesService;
   }
 
+  constructor() {
+    this.loadInitialData().subscribe();
+  }
+
   loadInitialData(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.url).pipe(
+    return this.spotifyService.fetchAlbums().pipe(
       tap((products) => {
         this.productsSubject.next(products);
         this.syncCartAndFavorites();
@@ -47,16 +51,9 @@ export class ProductService {
   }
 
   getProductDetailsById(id: string): Observable<Product> {
-    return this.http.get<Product>(`${this.url}/${id}`).pipe(
+    return this.spotifyService.fetchAlbumDetails(id).pipe(
       tap((product) => {
-        if (!product.tracks) {
-          this.http
-            .get<any>(`http://localhost:4000/products/${id}/tracks`)
-            .subscribe((tracks) => {
-              product.tracks = tracks;
-              this.productsSubject.next([product]);
-            });
-        }
+        this.productsSubject.next([...this.productsSubject.value, product]);
       })
     );
   }
