@@ -12,7 +12,7 @@
       </div>
       <p class="light-text">{{ product.author }}</p>
       <p class="tag">
-        {{ product.style }}
+        {{ product.createdDate | date : "dd/MM/yyyy" }}
       </p>
     </div>
     <div class="flex justify-between items-center">

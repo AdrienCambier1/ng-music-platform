@@ -9,7 +9,6 @@ import { DarkButtonComponent } from '../../components/dark-button/dark-button.co
 import { LightButtonComponent } from '../../components/light-button/light-button.component';
 import { NotFoundComponent } from '../not-found/not-found.component';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
-
 import { finalize } from 'rxjs';
 
 @Component({
@@ -36,7 +35,7 @@ export class ProductDetailsComponent {
     id: '',
     title: '',
     price: 0,
-    createdDate: new Date().toISOString(),
+    createdDate: '',
     style: '',
     quantity: 0,
     author: '',
@@ -77,7 +76,7 @@ export class ProductDetailsComponent {
     if (!this.product) return;
 
     this.productDetails = [
-      { label: 'Auteur', value: this.product.author },
+      { label: 'Artiste', value: this.product.author },
       { label: 'Style', value: this.product.style || 'Non défini' },
       {
         label: 'Date de création',

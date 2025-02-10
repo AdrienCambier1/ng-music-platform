@@ -37,14 +37,22 @@ export class ProductsListComponent {
 
   products: Product[] = [];
   searchValue: string = '';
-  sortOrder: string | any = 'asc';
+  sortOrder: string | any = 'title-asc';
   isLoaded: boolean = false;
   currentPage: number = 1;
   itemsPerPage: number = 20;
 
   sortOptions = [
-    { label: 'Croissant', action: () => this.changeSortOrder('asc') },
-    { label: 'Décroissant', action: () => this.changeSortOrder('desc') },
+    { label: 'Titre A-Z', action: () => this.changeSortOrder('title-asc') },
+    { label: 'Titre Z-A', action: () => this.changeSortOrder('title-desc') },
+    {
+      label: 'Plus récents',
+      action: () => this.changeSortOrder('date-newest'),
+    },
+    {
+      label: 'Plus anciens',
+      action: () => this.changeSortOrder('date-oldest'),
+    },
   ];
 
   ngOnInit(): void {

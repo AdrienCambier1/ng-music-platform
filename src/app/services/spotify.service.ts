@@ -13,7 +13,7 @@ export class SpotifyService {
   private API_URL = 'https://api.spotify.com/v1';
   private accessToken: string | null = null;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   private getAccessToken(): Observable<string> {
     const body = new HttpParams().set('grant_type', 'client_credentials');
@@ -23,11 +23,15 @@ export class SpotifyService {
     });
 
     return this.http
-      .post<{ access_token: string }>(this.TOKEN_URL, body.toString(), { headers })
+      .post<{ access_token: string }>(this.TOKEN_URL, body.toString(), {
+        headers,
+      })
       .pipe(
         tap((res) => (this.accessToken = res.access_token)),
         switchMap((res) =>
-          res.access_token ? of(res.access_token) : throwError(() => new Error("Erreur d'authentification"))
+          res.access_token
+            ? of(res.access_token)
+            : throwError(() => new Error("Erreur d'authentification"))
         )
       );
   }
@@ -52,13 +56,10 @@ export class SpotifyService {
           res.albums?.items
             ? of(res.albums.items.map(this.formatAlbum))
             : throwError(() => new Error('Aucun album trouvé'))
-        ),
-        catchError((error) => {
-          console.error('Erreur lors de la récupération des albums:', error);
-          return throwError(() => new Error('Erreur lors de la récupération des albums'));
-        })
+        )
       );
   }
+
   private formatAlbum(album: any) {
     return {
       id: album.id,
@@ -66,7 +67,6 @@ export class SpotifyService {
       author: album.artists.map((artist: any) => artist.name).join(', '),
       createdDate: album.release_date,
       price: SpotifyService.generatePriceFromId(album.id),
-      style: 'Album',
       imageUrl: album.images[0]?.url || '',
       artists: album.artists.map((artist: any) => ({
         name: artist.name,
@@ -77,7 +77,9 @@ export class SpotifyService {
 
   public fetchAlbumDetails(albumId: string): Observable<Product> {
     if (!this.accessToken) {
-      return this.getAccessToken().pipe(switchMap(() => this.getAlbumDetails(albumId)));
+      return this.getAccessToken().pipe(
+        switchMap(() => this.getAlbumDetails(albumId))
+      );
     }
     return this.getAlbumDetails(albumId);
   }
@@ -95,11 +97,7 @@ export class SpotifyService {
           res
             ? this.addGenresToAlbumDetails(res)
             : throwError(() => new Error('Album non trouvé'))
-        ),
-        catchError((error) => {
-          console.error('Erreur lors de la récupération des détails de l\'album:', error);
-          return throwError(() => new Error("Erreur lors de la récupération des détails de l'album"));
-        })
+        )
       );
   }
 
@@ -109,36 +107,32 @@ export class SpotifyService {
         album.artists.map((artist: any) =>
           this.fetchArtistGenres(artist.id).catch(() => 'Genre inconnu')
         )
-      )
-        .then((genres) => {
-          const tracks = album.tracks.items.map((track: any) => ({
-            trackId: track.id,
-            trackName: track.name,
-            trackDuration: track.duration_ms,
-            trackPreviewUrl: track.preview_url,
-          }));
+      ).then((genres) => {
+        const tracks = album.tracks.items.map((track: any) => ({
+          trackId: track.id,
+          trackName: track.name,
+          trackDuration: track.duration_ms,
+          trackPreviewUrl: track.preview_url,
+        }));
 
-          observer.next({
-            id: album.id,
-            title: album.name,
-            author: album.artists.map((artist: any) => artist.name).join(', '),
-            createdDate: album.release_date,
-            price: SpotifyService.generatePriceFromId(album.id),
-            quantity: 1,
-            isFavorite: false,
-            style: genres.join(', '),
-            imageUrl: album.images[0]?.url || '',
-            artists: album.artists.map((artist: any) => ({
-              name: artist.name,
-              profileUrl: artist.external_urls?.spotify || '',
-            })),
-            tracks,
-          });
-          observer.complete();
-        })
-        .catch((error) => {
-          observer.error(error);
+        observer.next({
+          id: album.id,
+          title: album.name,
+          author: album.artists.map((artist: any) => artist.name).join(', '),
+          createdDate: album.release_date,
+          price: SpotifyService.generatePriceFromId(album.id),
+          quantity: 1,
+          isFavorite: false,
+          style: genres.join(', '),
+          imageUrl: album.images[0]?.url || '',
+          artists: album.artists.map((artist: any) => ({
+            name: artist.name,
+            profileUrl: artist.external_urls?.spotify || '',
+          })),
+          tracks,
         });
+        observer.complete();
+      });
     });
   }
 
@@ -157,11 +151,7 @@ export class SpotifyService {
           res.albums?.items
             ? of(res.albums.items.map(this.formatAlbum))
             : throwError(() => new Error('Aucune suggestion trouvée'))
-        ),
-        catchError((error) => {
-          console.error('Erreur lors de la récupération des suggestions:', error);
-          return throwError(() => new Error('Erreur lors de la récupération des suggestions'));
-        })
+        )
       );
   }
 
@@ -173,14 +163,14 @@ export class SpotifyService {
     return this.http
       .get<any>(`${this.API_URL}/artists/${artistId}`, { headers })
       .pipe(
-        tap((response) => console.log('Genres récupérés pour l\'artiste:', response)),
-        switchMap((res) =>
-          res ? of(res.genres.join(', ')) : throwError(() => new Error('Genres introuvables'))
+        tap((response) =>
+          console.log("Genres récupérés pour l'artiste:", response)
         ),
-        catchError((error) => {
-          console.error(`Erreur lors de la récupération des genres de l'artiste ${artistId}`, error.message);
-          return of('Genre inconnu');
-        })
+        switchMap((res) =>
+          res
+            ? of(res.genres.join(', '))
+            : throwError(() => new Error('Genres introuvables'))
+        )
       )
       .toPromise();
   }
