@@ -144,3 +144,5 @@ async function fetchAlbumDetails(albumId) {
     throw new Error("Produit non trouvé");
   }
 }
+
+module.exports = app;
