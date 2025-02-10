@@ -53,6 +53,7 @@ export class ProductDetailsComponent {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       const id = String(params['id']);
+      this.isLoaded = false;
       this.loadProductDetails(id);
     });
   }
