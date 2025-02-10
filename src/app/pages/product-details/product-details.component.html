@@ -38,6 +38,13 @@
         </div>
         <p class="bold-text">{{ product.price }} €</p>
       </div>
+      <a
+        [href]="product.artists[0].profileUrl"
+        target="_blank"
+        class="text-blue-500"
+      >
+        Profil de l'artiste
+      </a>
       <app-light-button [value]="'Retour à la boutique'" [link]="'/'">
         <i class="fa-solid fa-arrow-left"></i>
       </app-light-button>
