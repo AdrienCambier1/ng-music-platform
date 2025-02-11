@@ -136,25 +136,6 @@ export class SpotifyService {
     });
   }
 
-  public fetchSuggestionsByGenre(genre: string): Observable<Product[]> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.accessToken}`,
-    });
-
-    const params = new HttpParams().set('genre', genre).set('limit', '10');
-
-    return this.http
-      .get<any>(`${this.API_URL}/browse/new-releases`, { headers, params })
-      .pipe(
-        tap((response) => console.log('Suggestions récupérées:', response)),
-        switchMap((res) =>
-          res.albums?.items
-            ? of(res.albums.items.map(this.formatAlbum))
-            : throwError(() => new Error('Aucune suggestion trouvée'))
-        )
-      );
-  }
-
   private fetchArtistGenres(artistId: string): Promise<string> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.accessToken}`,
