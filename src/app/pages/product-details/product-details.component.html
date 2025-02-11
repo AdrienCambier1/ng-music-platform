@@ -8,12 +8,12 @@
       @for(p of productDetails; track p.label) {
       <div class="flex items-center gap-4">
         <p class="light-text">
-          <span class="font-semibold text-blue-800 underline">{{ p.label }}</span> :
+          <span class="font-semibold text-neutral-800">{{ p.label }}</span> :
           @if(p.label === 'Artiste') {
           <a
             [href]="product.artists[0].profileUrl"
             target="_blank"
-            class="hover:underline"
+            class="text-blue-500 hover:underline"
           >
             {{ p.value }}
           </a>
