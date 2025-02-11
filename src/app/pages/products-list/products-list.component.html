@@ -16,7 +16,7 @@
   <app-pagination
     [currentPage]="currentPage"
     [itemsPerPage]="itemsPerPage"
-    [totalItems]="products.length"
+    [totalItems]="(products | searchFilter : searchValue).length"
     (pageChange)="onPageChange($event)"
   ></app-pagination>
   } @else {
