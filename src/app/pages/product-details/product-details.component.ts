@@ -107,6 +107,7 @@ export class ProductDetailsComponent {
   private loadFavoriteState(): void {
     this.favoritesService.favorites$.subscribe((favorites) => {
       if (!this.product) return;
+
       this.product.isFavorite = favorites.some(
         (p) => p.id === this.product!.id
       );
