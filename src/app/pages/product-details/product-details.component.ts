@@ -31,18 +31,7 @@ export class ProductDetailsComponent {
   route = inject(ActivatedRoute);
   datePipe = inject(DatePipe);
 
-  product: Product = {
-    id: '',
-    title: '',
-    price: 0,
-    createdDate: '',
-    style: '',
-    quantity: 0,
-    author: '',
-    isFavorite: false,
-    imageUrl: '',
-    artists: [],
-  };
+  product: Product | null = null;
 
   randomProducts: Product[] = [];
   quantity: number = 1;
@@ -117,7 +106,10 @@ export class ProductDetailsComponent {
 
   private loadFavoriteState(): void {
     this.favoritesService.favorites$.subscribe((favorites) => {
-      this.product.isFavorite = favorites.some((p) => p.id === this.product.id);
+      if (!this.product) return;
+      this.product.isFavorite = favorites.some(
+        (p) => p.id === this.product!.id
+      );
     });
   }
 
