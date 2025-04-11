@@ -7,12 +7,12 @@
   src: url("app/assets/font/Silka-Regular.otf");
 }
 
-* {
-  font-family: "Silka";
+html {
+  @apply scroll-smooth;
 }
 
 body {
-  @apply bg-neutral-100;
+  @apply bg-neutral-100 antialiased font-[Silka];
 }
 
 .main-title {
@@ -76,11 +76,11 @@ body {
 }
 
 .dark-button {
-  @apply cursor-pointer px-5 py-1 bg-neutral-800 rounded-full flex items-center gap-2 text-white text-sm font-semibold w-fit;
+  @apply cursor-pointer px-5 py-1.5 bg-neutral-800 rounded-full flex items-center gap-2 text-white text-sm font-semibold w-fit;
 }
 
 .light-button {
-  @apply cursor-pointer px-5 py-1 bg-black/10 rounded-full flex items-center gap-2 text-neutral-800 text-sm font-semibold w-fit;
+  @apply cursor-pointer px-5 py-1.5 bg-black/10 rounded-full flex items-center gap-2 text-neutral-800 text-sm font-semibold w-fit;
 }
 
 .form-input {
@@ -96,7 +96,7 @@ body {
 }
 
 .tag {
-  @apply text-yellow-500 bg-yellow-50 w-fit px-2 py-1 text-sm;
+  @apply text-yellow-500 bg-yellow-50 w-fit px-2 py-1.5 text-sm;
 }
 
 .img-card {
