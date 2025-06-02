@@ -104,7 +104,7 @@ body {
 }
 
 .section {
-  @apply flex flex-col items-center py-8 px-4 sm:px-8;
+  @apply flex flex-col items-center py-8 px-6;
 }
 
 .product-grid {
