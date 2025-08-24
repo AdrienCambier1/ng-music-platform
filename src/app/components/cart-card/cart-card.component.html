@@ -4,9 +4,6 @@
     <div class="flex flex-col gap-4">
       <h3 class="card-title">{{ product.title }}</h3>
       <p class="light-text">{{ product.author }}</p>
-      <p class="tag">
-        {{ product.createdDate | date : "dd/MM/yyyy" }}
-      </p>
       <div class="flex gap-2 items-center">
         <i class="fas fa-minus icon-button" (click)="decreaseQuantity()"></i>
         <p class="light-text">{{ product.quantity }}</p>
