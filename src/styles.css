@@ -64,7 +64,7 @@ body {
 }
 
 .card {
-  @apply flex bg-white shadow-md shadow-neutral-300/50 flex-col sm:flex-row;
+  @apply flex bg-white shadow-[5px_12px_20px_rgba(36,37,38,0.075)] flex-col sm:flex-row;
 }
 
 .alt-card {
