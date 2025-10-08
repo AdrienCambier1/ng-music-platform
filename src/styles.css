@@ -12,7 +12,7 @@ html {
 }
 
 body {
-  @apply bg-neutral-100 antialiased font-[Silka];
+  @apply bg-neutral-100 antialiased font-[Silka] overflow-x-hidden;
 }
 
 .main-title {
